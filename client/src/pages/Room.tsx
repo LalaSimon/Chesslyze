@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { io } from "socket.io-client";
 import { useParams, Link } from "react-router-dom";
 
@@ -16,7 +16,6 @@ const Room = () => {
 
     return (
         <>
-            <div></div>
             <div className="flex flex-col">
                 <Link onClick={leaveRoom} to="/">
                     Back to home
