@@ -22,9 +22,9 @@ io.on("connection", (socket) => {
         socket.on("leave_room", (room) => {
             socket.leave(room);
         });
-    });
-    socket.on("disconnect", () => {
-        console.log("user disconnected", socket.id);
+        socket.on("disconnect", () => {
+            console.log("user disconnected", socket.id);
+        });
     });
 });
 
