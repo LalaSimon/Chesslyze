@@ -6,7 +6,7 @@ const App = () => {
     const navigate = useNavigate();
 
     const joinRoom = () => {
-        navigate(`${roomID}`);
+        navigate(roomID);
     };
     return (
         <main>
