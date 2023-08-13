@@ -9,9 +9,9 @@ interface Move {
     to: string;
     promotion?: string;
 }
-
 const Room = () => {
     const [game, setGame] = useState(new Chess());
+    const [arrows, setArrows] = useState();
     const { roomID } = useParams();
     const socket = io("http://localhost:8080");
 
@@ -52,6 +52,17 @@ const Room = () => {
             promotion: "q",
         });
     });
+    socket.on("arrows_drawn", (arrowsData) => {
+        setArrows(arrowsData);
+    });
+
+    const arrowDrow = (arrowsData: any) => {
+        setArrows(arrowsData);
+        socket.emit("draw_arrows", {
+            arrowsData,
+            roomID,
+        });
+    };
     return (
         <>
             <div className="flex flex-col">
@@ -63,6 +74,8 @@ const Room = () => {
                 <h1>Welcome on room {roomID}</h1>
                 <div>
                     <Chessboard
+                        customArrows={arrows} // TO WYWOŁUJE PĘTLE - CHECK IT
+                        onArrowsChange={arrowDrow}
                         onPieceDrop={onDrop}
                         position={game.fen()}
                         boardWidth={650}

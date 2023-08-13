@@ -24,6 +24,10 @@ io.on("connection", (socket) => {
     socket.on("make_a_move", (data) => {
         socket.broadcast.to(data.roomID).emit("move_made", data.moveData);
     });
+    socket.on("draw_arrows", (data) => {
+        console.log(data);
+        socket.broadcast.to(data.roomID).emit("arrows_drawn", data.arrows);
+    });
     socket.on("leave_room", (room) => {
         socket.leave(room);
     });
