@@ -23,23 +23,35 @@ const Room = () => {
         socket.emit("leave_room", roomID);
     };
 
-    function makeAMove(move: Move) {
-        const gameCopy = new Chess(game.fen());
-        const result = gameCopy.move(move);
-        setGame(gameCopy);
-        return result;
-    }
-
-    function onDrop(sourceSquare: string, targetSquare: string) {
-        const move = makeAMove({
+    const makeAMove = (move: Move) => {
+        game.move(move);
+        setGame(new Chess(game.fen()));
+    };
+    const onDrop = (sourceSquare: string, targetSquare: string) => {
+        const move = {
             from: sourceSquare,
             to: targetSquare,
             promotion: "q",
+        };
+        makeAMove(move);
+
+        socket.emit("make_a_move", {
+            moveData: {
+                from: sourceSquare,
+                to: targetSquare,
+                promotion: "q",
+            },
+            roomID,
         });
-
         return true;
-    }
-
+    };
+    socket.on("move_made", (move) => {
+        makeAMove({
+            from: move.from,
+            to: move.to,
+            promotion: "q",
+        });
+    });
     return (
         <>
             <div className="flex flex-col">
