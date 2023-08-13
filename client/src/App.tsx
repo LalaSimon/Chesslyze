@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 const App = () => {
     const [roomID, setRoomID] = useState("");
     const navigate = useNavigate();
