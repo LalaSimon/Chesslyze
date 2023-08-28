@@ -14,6 +14,8 @@ const io = new Server(server, {
 
 app.use(cors());
 
+app.get("/", (req, res) => {});
+
 io.on("connection", (socket) => {
     socket.on("join_room", (room) => {
         socket.join(room);
@@ -22,7 +24,15 @@ io.on("connection", (socket) => {
         socket.broadcast.to(data.roomID).emit("move_made", data.moveData);
     });
     socket.on("draw_arrows", (data) => {
-        socket.to(data.roomID).emit("draw_arrows", data.arrows);
+        socket.broadcast.to(data.roomID).emit("arrows_drawn", data.arrowsData);
+    });
+    socket.on("send_highlight_square", (data) => {
+        socket.broadcast
+            .to(data.roomID)
+            .emit("get_highlight_square", data.square);
+    });
+    socket.on("clear_highlight_squares", (data) => {
+        socket.broadcast.to(data.roomID).emit("send_clear_highlight_squares");
     });
     socket.on("leave_room", (room) => {
         socket.leave(room);
