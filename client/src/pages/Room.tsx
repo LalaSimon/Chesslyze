@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useParams, Link } from "react-router-dom";
 import { Chessboard } from "react-chessboard";
-import { Chess } from "chess.js";
+import { Chess, Square } from "chess.js";
 
 interface Move {
     from: string;
@@ -11,13 +11,25 @@ interface Move {
 }
 const Room = () => {
     const [game, setGame] = useState(new Chess());
-    const [arrows, setArrows] = useState();
+    const [arrows, setArrows] = useState<Square[][]>([]);
     const { roomID } = useParams();
     const socket = io("http://localhost:8080");
 
+    socket.on("move_made", (move) => {
+        makeAMove({
+            from: move.from,
+            to: move.to,
+            promotion: "q",
+        });
+    });
+
+    socket.on("arrows_drawn", (arrowsData) => {
+        setArrows(arrowsData);
+    });
+
     useEffect(() => {
         socket.emit("join_room", roomID);
-    }, []);
+    });
 
     const leaveRoom = () => {
         socket.emit("leave_room", roomID);
@@ -45,23 +57,22 @@ const Room = () => {
         });
         return true;
     };
-    socket.on("move_made", (move) => {
-        makeAMove({
-            from: move.from,
-            to: move.to,
-            promotion: "q",
-        });
-    });
-    socket.on("arrows_drawn", (arrowsData) => {
-        setArrows(arrowsData);
-    });
 
-    const arrowDrow = (arrowsData: any) => {
-        setArrows(arrowsData);
-        socket.emit("draw_arrows", {
-            arrowsData,
-            roomID,
-        });
+    const arrowDrow = (arrowsData: Square[][]) => {
+        if (arrowsData.length === 0 && arrowsData !== arrows) {
+            setArrows([]);
+            socket.emit("draw_arrows", {
+                arrowsData,
+                roomID,
+            });
+        } else {
+            if (arrowsData.flat().join() === arrows.flat().join()) return;
+            setArrows(arrowsData);
+            socket.emit("draw_arrows", {
+                arrowsData,
+                roomID,
+            });
+        }
     };
     return (
         <>
@@ -74,7 +85,7 @@ const Room = () => {
                 <h1>Welcome on room {roomID}</h1>
                 <div>
                     <Chessboard
-                        customArrows={arrows} // TO WYWOŁUJE PĘTLE - CHECK IT
+                        customArrows={arrows}
                         onArrowsChange={arrowDrow}
                         onPieceDrop={onDrop}
                         position={game.fen()}
