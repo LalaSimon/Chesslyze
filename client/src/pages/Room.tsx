@@ -10,6 +10,7 @@ interface Move {
     promotion?: string;
 }
 const Room = () => {
+    const [highlightedSquares, setHighlightedSquares] = useState<string[]>([]);
     const [game, setGame] = useState(new Chess());
     const [arrows, setArrows] = useState<Square[][]>([]);
     const { roomID } = useParams();
@@ -74,6 +75,28 @@ const Room = () => {
             });
         }
     };
+    const highlightSquare = (square: string) => {
+        if (!highlightedSquares.includes(square)) {
+            setHighlightedSquares([...highlightedSquares, square]);
+            socket.emit("send_highlight_square", {
+                square,
+                roomID,
+            });
+        }
+    };
+    const clearHighlightedSquares = () => {
+        setHighlightedSquares([]);
+        console.log(highlightSquare, roomID);
+        socket.emit("clear_highlight_squares", { highlightSquare, roomID });
+    };
+    socket.on("send_clear_highlight_squares", () => {
+        setHighlightedSquares([]);
+    });
+    socket.on("get_highlight_square", (square) => {
+        if (!highlightedSquares.includes(square)) {
+            setHighlightedSquares([...highlightedSquares, square]);
+        }
+    });
     return (
         <>
             <div className="flex flex-col">
@@ -85,11 +108,28 @@ const Room = () => {
                 <h1>Welcome on room {roomID}</h1>
                 <div>
                     <Chessboard
+                        onSquareClick={clearHighlightedSquares}
+                        onSquareRightClick={highlightSquare}
                         customArrows={arrows}
                         onArrowsChange={arrowDrow}
                         onPieceDrop={onDrop}
                         position={game.fen()}
                         boardWidth={650}
+                        // tricky, need to be fixed. Also change color back to default
+                        customSquareStyles={{
+                            ...highlightedSquares.reduce(
+                                (
+                                    styles: Record<string, React.CSSProperties>,
+                                    square
+                                ) => {
+                                    styles[square] = {
+                                        backgroundColor: "rgb(255, 100, 100)",
+                                    };
+                                    return styles;
+                                },
+                                {} as Record<string, React.CSSProperties>
+                            ),
+                        }}
                     />
                 </div>
             </div>
