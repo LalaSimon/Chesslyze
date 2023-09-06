@@ -32,7 +32,7 @@ io.on("connection", (socket) => {
             .emit("get_highlight_square", data.square);
     });
     socket.on("clear_highlight_squares", (data) => {
-        socket.broadcast.to(data.roomID).emit("send_clear_highlight_squares");
+        socket.to(data.roomID).emit("send_clear_highlight_squares");
     });
     socket.on("leave_room", (room) => {
         socket.leave(room);
