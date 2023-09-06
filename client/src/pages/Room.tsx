@@ -15,7 +15,9 @@ const Room = () => {
     const [arrows, setArrows] = useState<Square[][]>([]);
     const { roomID } = useParams();
     const socket = io("http://localhost:8080");
-
+    useEffect(() => {
+        socket.emit("join_room", roomID);
+    });
     socket.on("move_made", (move) => {
         makeAMove({
             from: move.from,
@@ -28,15 +30,12 @@ const Room = () => {
         setArrows(arrowsData);
     });
 
-    useEffect(() => {
-        socket.emit("join_room", roomID);
-    });
-
     const leaveRoom = () => {
         socket.emit("leave_room", roomID);
     };
 
     const makeAMove = (move: Move) => {
+        console.log(move);
         game.move(move);
         setGame(new Chess(game.fen()));
     };
@@ -47,7 +46,6 @@ const Room = () => {
             promotion: "q",
         };
         makeAMove(move);
-
         socket.emit("make_a_move", {
             moveData: {
                 from: sourceSquare,
@@ -58,7 +56,6 @@ const Room = () => {
         });
         return true;
     };
-
     const arrowDrow = (arrowsData: Square[][]) => {
         if (arrowsData.length === 0 && arrowsData !== arrows) {
             setArrows([]);
@@ -82,21 +79,37 @@ const Room = () => {
                 square,
                 roomID,
             });
+        } else {
+            setHighlightedSquares(
+                highlightedSquares.filter((s) => s !== square)
+            );
+            socket.emit("send_highlight_square", {
+                square,
+                roomID,
+            });
         }
     };
+    socket.on("get_highlight_square", (square) => {
+        if (!highlightedSquares.includes(square)) {
+            setHighlightedSquares((prevHighlightedSquares) => [
+                ...prevHighlightedSquares,
+                square,
+            ]);
+        } else {
+            setHighlightedSquares((prevHighlightedSquares) =>
+                prevHighlightedSquares.filter((s) => s !== square)
+            );
+        }
+    });
     const clearHighlightedSquares = () => {
-        setHighlightedSquares([]);
-        console.log(highlightSquare, roomID);
         socket.emit("clear_highlight_squares", { highlightSquare, roomID });
     };
     socket.on("send_clear_highlight_squares", () => {
         setHighlightedSquares([]);
     });
-    socket.on("get_highlight_square", (square) => {
-        if (!highlightedSquares.includes(square)) {
-            setHighlightedSquares([...highlightedSquares, square]);
-        }
-    });
+    const onClick = () => {
+        console.log(game.moves());
+    };
     return (
         <>
             <div className="flex flex-col">
@@ -105,7 +118,7 @@ const Room = () => {
                 </Link>
             </div>
             <div className="flex flex-col justify-center items-center gap-4">
-                <h1>Welcome on room {roomID}</h1>
+                <h1 onClick={onClick}>Welcome on room {roomID}</h1>
                 <div>
                     <Chessboard
                         onSquareClick={clearHighlightedSquares}
@@ -115,7 +128,6 @@ const Room = () => {
                         onPieceDrop={onDrop}
                         position={game.fen()}
                         boardWidth={650}
-                        // tricky, need to be fixed. Also change color back to default
                         customSquareStyles={{
                             ...highlightedSquares.reduce(
                                 (
