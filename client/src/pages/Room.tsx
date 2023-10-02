@@ -63,7 +63,11 @@ const Room = () => {
     setArrows([])
     setHighlightedSquares([])
   })
-
+  socket.on('get_game', fen => {
+    setFen(fen)
+    setGame(new Chess(fen))
+    updateMovesList(fen)
+  })
   const onDrop = (sourceSquare: Square, targetSquare: Square) => {
     const move = {
       from: sourceSquare,
@@ -135,9 +139,33 @@ const Room = () => {
   const handleSetGame = (fen: string) => {
     setFen(fen)
     setGame(new Chess(fen))
+    updateMovesList(fen)
+    socket.emit('set_game', {
+      fen,
+      roomID,
+    })
   }
   const showOldFen = (fen: string) => {
     setGame(new Chess(fen))
+  }
+  function updateMovesList(fen: string) {
+    const copiedMoves = []
+    let foundFen: boolean = false
+    for (const moves of moveList) {
+      const copiedMoveList = []
+      for (const move of moves) {
+        copiedMoveList.push(move)
+        if (move.fen === fen) {
+          foundFen = true
+          break
+        }
+      }
+      copiedMoves.push(copiedMoveList)
+      if (foundFen) {
+        break
+      }
+    }
+    setMoveList(copiedMoves as [MoveObject][])
   }
   return (
     <>
@@ -177,16 +205,19 @@ const Room = () => {
           <h1>Move list</h1>
           <div className="flex flex-col items-start justify-center gap-2">
             {moveList.map((move, index) => (
-              <div className="flex gap-5" key={index}>
+              <div className="flex items-center justify-center gap-5" key={index}>
                 <span className="mr-[-15px]">{index + 1}.</span>
                 {move.map((moveObject, index) => (
-                  <div className="flex w-14 justify-center rounded-xl border py-1" key={index}>
-                    <span
-                      onMouseEnter={() => showOldFen(moveObject.fen)}
-                      onMouseLeave={() => handleSetGame(fen)}
-                      onClick={() => handleSetGame(moveObject.fen)}>
-                      {moveObject.move}
-                    </span>
+                  <div
+                    onMouseEnter={() => showOldFen(moveObject.fen)}
+                    onMouseLeave={() => {
+                      setFen(fen)
+                      setGame(new Chess(fen))
+                    }}
+                    onClick={() => handleSetGame(moveObject.fen)}
+                    className="flex w-14 cursor-pointer justify-center rounded-xl border py-1 hover:bg-gray-200 active:bg-gray-400"
+                    key={index}>
+                    <span>{moveObject.move}</span>
                   </div>
                 ))}
               </div>
