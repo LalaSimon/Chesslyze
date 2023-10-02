@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom'
 import { Chessboard } from 'react-chessboard'
 import { Chess, Square } from 'chess.js'
 import Button from '../components/Buttons'
+import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 
 interface MoveObject {
   move: string
@@ -16,6 +17,7 @@ const Room = () => {
   const [arrows, setArrows] = useState<Square[][]>([])
   const [fen, setFen] = useState<string>('')
   const { roomID } = useParams()
+  const [orientation, setOrientation] = useState<BoardOrientation>('white')
   const socket = io('http://localhost:3000', {
     transports: ['websocket'],
   })
@@ -50,6 +52,13 @@ const Room = () => {
       setHighlightedSquares(prevHighlightedSquares => prevHighlightedSquares.filter(s => s !== square))
     }
   })
+  // socket.on('board_cleared', () => {
+  //   console.log('odebranie z be')
+  //   setGame(new Chess())
+  //   setMoveList([])
+  //   setFen('')
+  // })
+  // TO BE FIXED
   socket.on('get_list_moves', moveList => {
     setMoveList(moveList)
   })
@@ -68,6 +77,13 @@ const Room = () => {
     setGame(new Chess(fen))
     updateMovesList(fen)
   })
+  const clearBoard = () => {
+    socket.emit('clear_board', roomID)
+    setFen('')
+    setGame(new Chess())
+    setMoveList([])
+  }
+
   const onDrop = (sourceSquare: Square, targetSquare: Square) => {
     const move = {
       from: sourceSquare,
@@ -167,41 +183,57 @@ const Room = () => {
     }
     setMoveList(copiedMoves as [MoveObject][])
   }
+  const handleOrietnation = () => {
+    if (orientation === 'white') {
+      setOrientation('black')
+    } else {
+      setOrientation('white')
+    }
+  }
+
   return (
     <>
-      <div className="flex flex-col">
-        <Link onClick={leaveRoom} to="/">
+      <div className="mt-10 flex h-[100vh] items-center justify-center gap-2">
+        <Link className="absolute left-0 top-0 ml-2" onClick={leaveRoom} to="/">
           Back to home
         </Link>
-      </div>
-      <div className="flex flex-col items-center justify-center gap-4">
-        <h1>Welcome on room {roomID}</h1>
-        <div onClick={clearHighlightedSquares}>
-          <Chessboard
-            onSquareRightClick={highlightSquare}
-            customArrows={arrows}
-            onArrowsChange={arrowDrow}
-            onPieceDrop={onDrop}
-            position={game.fen()}
-            boardWidth={650}
-            customSquareStyles={{
-              ...highlightedSquares.reduce(
-                (styles: Record<string, React.CSSProperties>, square) => {
-                  styles[square] = {
-                    backgroundColor: 'rgb(255, 100, 100)',
-                  }
-                  return styles
-                },
-                {} as Record<string, React.CSSProperties>
-              ),
-            }}
-          />
+        <div className="mr-3 text-center">
+          <span>Orientation</span>
+          <Button callback={handleOrietnation} text={orientation === 'white' ? 'white' : 'black'} />
         </div>
-        <div className="flex gap-5">
-          <Button text="Undo" />
-          <Button text="Redo" />
+
+        <div className="flex flex-col items-center justify-center gap-4">
+          <h1>Welcome on room {roomID}</h1>
+          <div onClick={clearHighlightedSquares}>
+            <Chessboard
+              onSquareRightClick={highlightSquare}
+              customArrows={arrows}
+              onArrowsChange={arrowDrow}
+              onPieceDrop={onDrop}
+              position={game.fen()}
+              boardOrientation={orientation}
+              boardWidth={650}
+              customSquareStyles={{
+                ...highlightedSquares.reduce(
+                  (styles: Record<string, React.CSSProperties>, square) => {
+                    styles[square] = {
+                      backgroundColor: 'rgb(255, 100, 100)',
+                    }
+                    return styles
+                  },
+                  {} as Record<string, React.CSSProperties>
+                ),
+              }}
+            />
+          </div>
+
+          <div className="flex gap-5">
+            <Button text="Undo" />
+            <Button text="Redo" />
+            <Button callback={clearBoard} text="Clear" />
+          </div>
         </div>
-        <div className="flex flex-col items-center justify-center gap-2">
+        <div className="mb-[650px] flex flex-col items-center justify-center  gap-2 pl-[50px]">
           <h1>Move list</h1>
           <div className="flex flex-col items-start justify-center gap-2">
             {moveList.map((move, index) => (
