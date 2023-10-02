@@ -20,7 +20,6 @@ const main = () => {
       socket.join(room)
     })
     socket.on('make_a_move', data => {
-      console.log(data)
       socket.broadcast.to(data.roomID).emit('move_made', data)
     })
     socket.on('draw_arrows', data => {
@@ -37,6 +36,9 @@ const main = () => {
     })
     socket.on('set_game', data => {
       socket.broadcast.to(data.roomID).emit('get_game', data.fen)
+    })
+    socket.on('clear_board', data => {
+      socket.broadcast.to(data.roomID).emit('board_cleared')
     })
     socket.on('leave_room', room => {
       socket.leave(room)
