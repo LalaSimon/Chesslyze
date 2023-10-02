@@ -35,6 +35,9 @@ const main = () => {
     socket.on('send_list_moves', data => {
       socket.broadcast.to(data.roomID).emit('get_list_moves', data.listMoves)
     })
+    socket.on('set_game', data => {
+      socket.broadcast.to(data.roomID).emit('get_game', data.fen)
+    })
     socket.on('leave_room', room => {
       socket.leave(room)
     })
