@@ -218,16 +218,6 @@ const Room = () => {
                     className="flex w-14 cursor-pointer justify-center rounded-xl border py-1 hover:bg-gray-200 active:bg-gray-400"
                     key={index}>
                     <span>{moveObject.move}</span>
-              <div className="flex gap-5" key={index}>
-                <span className="mr-[-15px]">{index + 1}.</span>
-                {move.map((moveObject, index) => (
-                  <div className="flex w-14 justify-center rounded-xl border py-1" key={index}>
-                    <span
-                      onMouseEnter={() => showOldFen(moveObject.fen)}
-                      onMouseLeave={() => handleSetGame(fen)}
-                      onClick={() => handleSetGame(moveObject.fen)}>
-                      {moveObject.move}
-                    </span>
                   </div>
                 ))}
               </div>
