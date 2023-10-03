@@ -18,6 +18,8 @@ const Room = () => {
   const [fen, setFen] = useState<string>('')
   const { roomID } = useParams()
   const [orientation, setOrientation] = useState<BoardOrientation>('white')
+  const [otherPlayerOrientation, setOtherPlayerOrientation] = useState<BoardOrientation>('white')
+  const [renderSmallBoard, setRenderSmallBoard] = useState<boolean>(false)
   const socket = io('http://localhost:3000', {
     transports: ['websocket'],
   })
@@ -52,13 +54,12 @@ const Room = () => {
       setHighlightedSquares(prevHighlightedSquares => prevHighlightedSquares.filter(s => s !== square))
     }
   })
-  // socket.on('board_cleared', () => {
-  //   console.log('odebranie z be')
-  //   setGame(new Chess())
-  //   setMoveList([])
-  //   setFen('')
-  // })
-  // TO BE FIXED
+  socket.on('board_cleared', () => {
+    setGame(new Chess())
+    setMoveList([])
+    setFen('')
+  })
+
   socket.on('get_list_moves', moveList => {
     setMoveList(moveList)
   })
@@ -78,10 +79,10 @@ const Room = () => {
     updateMovesList(fen)
   })
   const clearBoard = () => {
-    socket.emit('clear_board', roomID)
     setFen('')
     setGame(new Chess())
     setMoveList([])
+    socket.emit('clear_board', { roomID })
   }
 
   const onDrop = (sourceSquare: Square, targetSquare: Square) => {
@@ -161,10 +162,7 @@ const Room = () => {
       roomID,
     })
   }
-  const showOldFen = (fen: string) => {
-    setGame(new Chess(fen))
-  }
-  function updateMovesList(fen: string) {
+  const updateMovesList = (fen: string) => {
     const copiedMoves = []
     let foundFen: boolean = false
     for (const moves of moveList) {
@@ -186,20 +184,49 @@ const Room = () => {
   const handleOrietnation = () => {
     if (orientation === 'white') {
       setOrientation('black')
+      socket.emit('other_player_orientation', {
+        roomID,
+        orientation: 'black',
+      })
     } else {
       setOrientation('white')
+      socket.emit('other_player_orientation', {
+        roomID,
+        orientation: 'white',
+      })
     }
   }
+  socket.on('get_other_player_orientation', orientation => {
+    setOtherPlayerOrientation(orientation)
+  })
+  const changeOtherPlayerOrientation = () => {
+    socket.emit('change_orientation', {
+      roomID,
+    })
+    setOtherPlayerOrientation(otherPlayerOrientation === 'white' ? 'black' : 'white')
+  }
+  socket.on('orientation_changed', () => {
+    handleOrietnation()
+  })
 
   return (
     <>
-      <div className="mt-10 flex h-[100vh] items-center justify-center gap-2">
+      <div className="flex h-[100vh] items-center justify-center gap-2">
         <Link className="absolute left-0 top-0 ml-2" onClick={leaveRoom} to="/">
           Back to home
         </Link>
-        <div className="mr-3 text-center">
-          <span>Orientation</span>
-          <Button callback={handleOrietnation} text={orientation === 'white' ? 'white' : 'black'} />
+        <div className="mr-5 flex min-w-fit flex-col gap-5">
+          <div className="text-center">
+            <span>your orientation</span>
+            <Button callback={handleOrietnation} text={orientation === 'white' ? 'white' : 'black'} />
+          </div>
+          <div className="text-center">
+            <span>user orientation</span>
+            <Button
+              callback={changeOtherPlayerOrientation}
+              text={otherPlayerOrientation === 'white' ? 'white' : 'black'}
+            />
+          </div>
         </div>
 
         <div className="flex flex-col items-center justify-center gap-4">
@@ -233,27 +260,37 @@ const Room = () => {
             <Button callback={clearBoard} text="Clear" />
           </div>
         </div>
-        <div className="mb-[650px] flex flex-col items-center justify-center  gap-2 pl-[50px]">
-          <h1>Move list</h1>
-          <div className="flex flex-col items-start justify-center gap-2">
+        <div className="relative ml-10 flex min-w-[285px] flex-col gap-2 border">
+          <h1 className="text-center">Move list</h1>
+          <div className="flex h-[600px] w-full flex-col justify-start gap-6 overflow-scroll pl-10">
             {moveList.map((move, index) => (
-              <div className="flex items-center justify-center gap-5" key={index}>
-                <span className="mr-[-15px]">{index + 1}.</span>
-                {move.map((moveObject, index) => (
-                  <div
-                    onMouseEnter={() => showOldFen(moveObject.fen)}
-                    onMouseLeave={() => {
-                      setFen(fen)
-                      setGame(new Chess(fen))
-                    }}
-                    onClick={() => handleSetGame(moveObject.fen)}
-                    className="flex w-14 cursor-pointer justify-center rounded-xl border py-1 hover:bg-gray-200 active:bg-gray-400"
-                    key={index}>
-                    <span>{moveObject.move}</span>
-                  </div>
-                ))}
+              <div className="flex w-full items-center gap-6" key={index}>
+                <span>{index + 1}.</span>
+                <div className="flex w-full gap-6">
+                  {move.map((moveObject, index) => (
+                    <div
+                      onMouseEnter={() => {
+                        setFen(moveObject.fen)
+                        setRenderSmallBoard(true)
+                      }}
+                      onMouseLeave={() => {
+                        setFen(game.fen())
+                        setRenderSmallBoard(false)
+                      }}
+                      onClick={() => handleSetGame(moveObject.fen)}
+                      className="flex w-14 cursor-pointer justify-center rounded-xl border py-1 hover:bg-gray-200 active:bg-gray-400"
+                      key={index}>
+                      <span>{moveObject.move}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
+            {renderSmallBoard && (
+              <div className="pointer-events-none absolute left-[15px] top-[-300px]">
+                <Chessboard boardOrientation={orientation} boardWidth={250} position={fen} />
+              </div>
+            )}
           </div>
         </div>
       </div>
