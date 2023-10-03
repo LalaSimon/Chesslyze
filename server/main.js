@@ -40,6 +40,12 @@ const main = () => {
     socket.on('clear_board', data => {
       socket.broadcast.to(data.roomID).emit('board_cleared')
     })
+    socket.on('change_orientation', data => {
+      socket.broadcast.to(data.roomID).emit('orientation_changed')
+    })
+    socket.on('other_player_orientation', data => {
+      socket.broadcast.to(data.roomID).emit('get_other_player_orientation', data.orientation)
+    })
     socket.on('leave_room', room => {
       socket.leave(room)
     })
