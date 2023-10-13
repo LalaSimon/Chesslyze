@@ -3,7 +3,7 @@ import { io } from 'socket.io-client'
 import { useParams, Link } from 'react-router-dom'
 import { Chessboard } from 'react-chessboard'
 import { Chess, Square } from 'chess.js'
-import Button from '../components/Buttons'
+import Button from '../../shared/components/Buttons'
 import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 
 interface MoveObject {
