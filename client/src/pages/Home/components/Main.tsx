@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Button from '../../../shared/components/Buttons'
+import { Button } from '../../../shared/components/Button'
 
 export const Main = () => {
   const [roomID, setRoomID] = useState('')
@@ -18,7 +18,7 @@ export const Main = () => {
         placeholder="Input room ID"
         onChange={e => setRoomID(e.target.value)}
       />
-      <Button text="Join room" callback={joinRoom} />
+      <Button btnText="Join room" callback={joinRoom} />
     </main>
   )
 }
