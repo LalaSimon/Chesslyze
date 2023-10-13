@@ -12,6 +12,4 @@ Fullstack web application for advanced chess players allowing them to analyze ch
 
 **Server:** Node.js, Express.js, Socket.io
 
-**DB:** MongoDB
-
 **Build:** Vite
