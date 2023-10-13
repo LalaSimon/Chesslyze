@@ -1,49 +1,42 @@
-import { Chess, Square } from 'chess.js'
+import { Chess } from 'chess.js'
 import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 import { ChessboardComponent } from './ChessboardWrapper/ChessboardComponent'
 import { ChessboardButtons } from './ChessboardWrapper/ChessboardButtons'
-
+import { Dispatch, SetStateAction } from 'react'
+import { type MoveObject } from '../../../shared/types/MoveObject'
 interface ChessboardWrapperProps {
   roomID?: string
-  clearHighlightedSquares: () => void
-  highlightSquare: (square: string) => void
-  arrows: Square[][]
-  arrowDrow: (arrows: Square[][]) => void
-  onDrop: (sourceSquare: Square, targetSquare: Square) => boolean
   game: Chess
   orientation: BoardOrientation
-  highlightedSquares: string[]
-  clearBoard: () => void
+  setFen: Dispatch<SetStateAction<string>>
+  setMoveList: Dispatch<SetStateAction<[MoveObject][]>>
+  moveList: [MoveObject][]
+  setGame: Dispatch<SetStateAction<Chess>>
 }
 
 export const ChessboardWrapper = ({
   roomID,
-  clearHighlightedSquares,
-  highlightSquare,
-  arrows,
-  arrowDrow,
-  onDrop,
   game,
   orientation,
-  highlightedSquares,
-  clearBoard,
+  setFen,
+  setMoveList,
+  moveList,
+  setGame,
 }: ChessboardWrapperProps) => {
   return (
     <section className="flex flex-col items-center justify-center gap-4">
       <h1>You are in room nr {roomID}</h1>
-
       <ChessboardComponent
-        clearHighlightedSquares={clearHighlightedSquares}
-        highlightSquare={highlightSquare}
-        arrows={arrows}
-        arrowDrow={arrowDrow}
-        onDrop={onDrop}
+        setGame={setGame}
         game={game}
         boardOrientation={orientation}
-        highlightedSquares={highlightedSquares}
+        roomID={roomID!}
+        setFen={setFen}
+        setMoveList={setMoveList}
+        moveList={moveList}
       />
 
-      <ChessboardButtons clearBoard={clearBoard} />
+      <ChessboardButtons setFen={setFen} setGame={setGame} roomID={roomID} setMoveList={setMoveList} />
     </section>
   )
 }
