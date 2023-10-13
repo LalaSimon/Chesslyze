@@ -1,30 +1,62 @@
 import { Chessboard } from 'react-chessboard'
 import { type MoveObject } from '../../../shared/types/MoveObject'
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 import { Chess } from 'chess.js'
+import { io } from 'socket.io-client'
+import { updateMovesList } from '../../../shared/utils/MoveList/updateMovesList'
 
 interface MoveListProps {
   moveList: [MoveObject][]
   setFen: Dispatch<SetStateAction<string>>
-  setRenderSmallBoard: Dispatch<SetStateAction<boolean>>
-  handleSetGame: (fen: string) => void
-  renderSmallBoard: boolean
   orientation: BoardOrientation
   fen: string
   game: Chess
+  setGame: Dispatch<SetStateAction<Chess>>
+  roomID: string | undefined
+  setMoveList: Dispatch<SetStateAction<[MoveObject][]>>
 }
 
 export const MoveList = ({
   moveList,
   setFen,
-  setRenderSmallBoard,
-  handleSetGame,
-  renderSmallBoard,
   orientation,
   fen,
   game,
+  setGame,
+  roomID,
+  setMoveList,
 }: MoveListProps) => {
+  const [renderSmallBoard, setRenderSmallBoard] = useState<boolean>(false)
+  const socket = io('http://localhost:3000', {
+    transports: ['websocket'],
+  })
+
+  useEffect(() => {
+    socket.emit('join_room', roomID)
+    return () => {
+      socket.disconnect()
+    }
+  }, [roomID, socket])
+
+  const handleSetGame = (fen: string) => {
+    setFen(fen)
+    setGame(new Chess(fen))
+    updateMovesList({ fen, moveList, setMoveList })
+    socket.emit('set_game', {
+      fen,
+      roomID,
+    })
+  }
+
+  socket.on('get_game', fen => {
+    setFen(fen)
+    setGame(new Chess(fen))
+    updateMovesList({ fen, moveList, setMoveList })
+  })
+
+  socket.on('get_list_moves', moveList => setMoveList(moveList))
+
   return (
     <section className="relative ml-10 flex min-w-[285px] flex-col gap-2 border">
       <h2 className="text-center">Move list</h2>
