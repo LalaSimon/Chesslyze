@@ -1,7 +1,7 @@
 import { Header } from './components/Header'
 import { Main } from './components/Main'
 
-const App = () => {
+const Home = () => {
   return (
     <div>
       <Header />
@@ -10,4 +10,4 @@ const App = () => {
   )
 }
 
-export default App
+export default Home
