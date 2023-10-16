@@ -16,8 +16,11 @@ const moveListSlice = createSlice({
     setMoveList: (state, action) => {
       return { ...state, moveList: action.payload }
     },
+    clearMoveList: state => {
+      return { ...state, moveList: [] }
+    },
   },
 })
 
-export const { setMoveList } = moveListSlice.actions
+export const { setMoveList, clearMoveList } = moveListSlice.actions
 export default moveListSlice.reducer

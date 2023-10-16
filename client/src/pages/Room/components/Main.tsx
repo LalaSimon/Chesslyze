@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Chess } from 'chess.js'
 import { Orientation } from './Orientation'
 import { ChessboardWrapper } from './ChessboardWrapper'
-import { type MoveObject } from '../../../shared/types/MoveObject'
 import { MoveList } from './MoveList'
 
 interface MainProps {
@@ -10,20 +9,13 @@ interface MainProps {
 }
 
 export const Main = ({ roomID }: MainProps) => {
-  const [moveList, setMoveList] = useState<[MoveObject][]>([])
   const [game, setGame] = useState(new Chess())
 
   return (
     <main className="flex h-full items-center justify-center gap-2">
       <Orientation roomID={roomID} />
 
-      <ChessboardWrapper
-        roomID={roomID}
-        game={game}
-        setGame={setGame}
-        setMoveList={setMoveList}
-        moveList={moveList}
-      />
+      <ChessboardWrapper roomID={roomID} game={game} setGame={setGame} />
 
       <MoveList game={game} setGame={setGame} roomID={roomID} />
     </main>

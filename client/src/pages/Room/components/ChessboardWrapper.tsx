@@ -3,17 +3,14 @@ import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 import { ChessboardComponent } from './ChessboardWrapper/ChessboardComponent'
 import { ChessboardButtons } from './ChessboardWrapper/ChessboardButtons'
 import { Dispatch, SetStateAction } from 'react'
-import { type MoveObject } from '../../../shared/types/MoveObject'
 import { useTypedSelector } from '../../../redux/store'
 interface ChessboardWrapperProps {
   roomID?: string
   game: Chess
-  setMoveList: Dispatch<SetStateAction<[MoveObject][]>>
-  moveList: [MoveObject][]
   setGame: Dispatch<SetStateAction<Chess>>
 }
 
-export const ChessboardWrapper = ({ roomID, game, setMoveList, setGame }: ChessboardWrapperProps) => {
+export const ChessboardWrapper = ({ roomID, game, setGame }: ChessboardWrapperProps) => {
   const { orientation } = useTypedSelector(state => state.orientation)
   return (
     <section className="flex flex-col items-center justify-center gap-4">
@@ -26,7 +23,7 @@ export const ChessboardWrapper = ({ roomID, game, setMoveList, setGame }: Chessb
         roomID={roomID!}
       />
 
-      <ChessboardButtons setGame={setGame} roomID={roomID} setMoveList={setMoveList} />
+      <ChessboardButtons setGame={setGame} roomID={roomID} />
     </section>
   )
 }

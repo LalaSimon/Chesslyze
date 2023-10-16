@@ -19,9 +19,7 @@ export const Orientation = ({ roomID }: OrientationProps) => {
 
   useEffect(() => {
     socket.emit('join_room', roomID)
-    return () => {
-      socket.disconnect()
-    }
+    return () => {}
   }, [roomID, socket])
 
   const handleOrietnation = () => {
