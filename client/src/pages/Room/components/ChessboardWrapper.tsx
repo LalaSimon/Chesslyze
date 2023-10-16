@@ -3,40 +3,27 @@ import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 import { ChessboardComponent } from './ChessboardWrapper/ChessboardComponent'
 import { ChessboardButtons } from './ChessboardWrapper/ChessboardButtons'
 import { Dispatch, SetStateAction } from 'react'
-import { type MoveObject } from '../../../shared/types/MoveObject'
+import { useTypedSelector } from '../../../redux/store'
 interface ChessboardWrapperProps {
   roomID?: string
   game: Chess
-  orientation: BoardOrientation
-  setFen: Dispatch<SetStateAction<string>>
-  setMoveList: Dispatch<SetStateAction<[MoveObject][]>>
-  moveList: [MoveObject][]
   setGame: Dispatch<SetStateAction<Chess>>
 }
 
-export const ChessboardWrapper = ({
-  roomID,
-  game,
-  orientation,
-  setFen,
-  setMoveList,
-  moveList,
-  setGame,
-}: ChessboardWrapperProps) => {
+export const ChessboardWrapper = ({ roomID, game, setGame }: ChessboardWrapperProps) => {
+  const { orientation } = useTypedSelector(state => state.orientation)
   return (
     <section className="flex flex-col items-center justify-center gap-4">
       <h1>You are in room nr {roomID}</h1>
+
       <ChessboardComponent
         setGame={setGame}
         game={game}
-        boardOrientation={orientation}
+        boardOrientation={orientation as BoardOrientation}
         roomID={roomID!}
-        setFen={setFen}
-        setMoveList={setMoveList}
-        moveList={moveList}
       />
 
-      <ChessboardButtons setFen={setFen} setGame={setGame} roomID={roomID} setMoveList={setMoveList} />
+      <ChessboardButtons setGame={setGame} roomID={roomID} />
     </section>
   )
 }

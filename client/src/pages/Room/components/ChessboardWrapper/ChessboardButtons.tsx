@@ -1,38 +1,35 @@
 import { Button } from '../../../../shared/components/Button'
-import { Dispatch, SetStateAction, useEffect } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 import { Chess } from 'chess.js'
-import { MoveObject } from '../../../../shared/types/MoveObject'
 import { io } from 'socket.io-client'
+import { useTypedDispatch } from '../../../../redux/store'
+import { clearFen } from '../../../../redux/slices/fen'
+import { clearMoveList } from '../../../../redux/slices/moveList'
 interface ChessboardButtonsProps {
-  setFen: Dispatch<SetStateAction<string>>
-  setMoveList: Dispatch<SetStateAction<[MoveObject][]>>
   setGame: Dispatch<SetStateAction<Chess>>
   roomID: string | undefined
 }
 
-export const ChessboardButtons = ({ setFen, setGame, setMoveList, roomID }: ChessboardButtonsProps) => {
+export const ChessboardButtons = ({ setGame, roomID }: ChessboardButtonsProps) => {
   const socket = io('http://localhost:3000', {
     transports: ['websocket'],
   })
+  const dispatch = useTypedDispatch()
 
-  useEffect(() => {
-    socket.emit('join_room', roomID)
-    return () => {
-      socket.disconnect()
-    }
-  }, [roomID, socket])
+  socket.emit('join_room', roomID)
 
   const clearBoard = () => {
-    setFen('')
+    dispatch(clearFen())
+    dispatch(clearMoveList())
     setGame(new Chess())
-    setMoveList([])
     socket.emit('clear_board', { roomID })
+    socket.disconnect()
   }
 
   socket.on('board_cleared', () => {
+    dispatch(clearMoveList())
+    dispatch(clearFen())
     setGame(new Chess())
-    setMoveList([])
-    setFen('')
   })
 
   return (

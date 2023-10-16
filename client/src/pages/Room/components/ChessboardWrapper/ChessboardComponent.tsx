@@ -4,12 +4,12 @@ import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 import { SetStateAction, Dispatch, useState, useEffect } from 'react'
 import { MoveObject } from '../../../../shared/types/MoveObject'
 import { io } from 'socket.io-client'
+import { useTypedDispatch, useTypedSelector } from '../../../../redux/store'
+import { setFen } from '../../../../redux/slices/fen'
+import { setMoveList } from '../../../../redux/slices/moveList'
 interface ChessboardComponentProps {
   game: Chess
   boardOrientation: BoardOrientation
-  setFen: Dispatch<SetStateAction<string>>
-  setMoveList: Dispatch<SetStateAction<[MoveObject][]>>
-  moveList: [MoveObject][]
   roomID: string
   setGame: Dispatch<SetStateAction<Chess>>
 }
@@ -17,14 +17,13 @@ interface ChessboardComponentProps {
 export const ChessboardComponent = ({
   game,
   boardOrientation,
-  setFen,
-  moveList,
-  setMoveList,
   roomID,
   setGame,
 }: ChessboardComponentProps) => {
+  const dispatch = useTypedDispatch()
   const [highlightedSquares, setHighlightedSquares] = useState<string[]>([])
   const [arrows, setArrows] = useState<Square[][]>([])
+  const { moveList } = useTypedSelector(state => state.moveList)
   const socket = io('http://localhost:3000', {
     transports: ['websocket'],
   })
@@ -42,21 +41,25 @@ export const ChessboardComponent = ({
       to: targetSquare,
       promotion: 'q',
     }
+
     if (game.move(move)) {
       const sanNotationMove = game.history().pop() as string
-      const movesCopy = [...moveList]
+      const movesCopy = [...moveList.map(move => [...move])]
       const moveObject: MoveObject = {
         move: sanNotationMove,
         fen: game.fen(),
       }
-      if (movesCopy.length === 0) movesCopy.push([moveObject])
-      else if (movesCopy[movesCopy.length - 1].length > 1) {
+
+      if (movesCopy.length === 0) {
+        movesCopy.push([moveObject])
+      } else if (movesCopy[movesCopy.length - 1].length != 1) {
         movesCopy.push([moveObject])
       } else {
         movesCopy[movesCopy.length - 1].push(moveObject)
       }
-      setFen(game.fen())
-      setMoveList([...movesCopy])
+
+      dispatch(setFen(game.fen()))
+      dispatch(setMoveList([...movesCopy]))
       socket.emit('make_a_move', {
         moveList: movesCopy,
         move,
@@ -100,6 +103,7 @@ export const ChessboardComponent = ({
       })
     }
   }
+
   const clearHighlightedSquares = () => {
     setArrows([])
     setHighlightedSquares([])
@@ -118,7 +122,7 @@ export const ChessboardComponent = ({
   socket.on('move_made', data => {
     if (game.move(data.move)) {
       setGame(game)
-      setMoveList(data.moveList)
+      dispatch(setMoveList(data.moveList))
       return true
     } else {
       return false
@@ -130,6 +134,7 @@ export const ChessboardComponent = ({
       ? setHighlightedSquares(prevHighlightedSquares => [...prevHighlightedSquares, square])
       : setHighlightedSquares(prevHighlightedSquares => prevHighlightedSquares.filter(s => s !== square))
   )
+
   return (
     <div onClick={clearHighlightedSquares}>
       <Chessboard

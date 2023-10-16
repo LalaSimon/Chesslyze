@@ -1,34 +1,36 @@
 import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 import { Button } from '../../../shared/components/Button'
-import { useEffect, Dispatch, SetStateAction, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
+import { useTypedDispatch, useTypedSelector } from '../../../redux/store'
+import { setOrientation } from '../../../redux/slices/orientation'
 interface OrientationProps {
-  orientation: string
-  setOrientation: Dispatch<SetStateAction<BoardOrientation>>
   roomID: string | undefined
 }
 
-export const Orientation = ({ orientation, setOrientation, roomID }: OrientationProps) => {
+export const Orientation = ({ roomID }: OrientationProps) => {
   const [otherPlayerOrientation, setOtherPlayerOrientation] = useState<BoardOrientation>('white')
+  const { orientation } = useTypedSelector(state => state.orientation)
+  const dispatch = useTypedDispatch()
+
   const socket = io('http://localhost:3000', {
     transports: ['websocket'],
   })
+
   useEffect(() => {
     socket.emit('join_room', roomID)
-    return () => {
-      socket.disconnect()
-    }
+    return () => {}
   }, [roomID, socket])
 
   const handleOrietnation = () => {
     if (orientation === 'white') {
-      setOrientation('black')
+      dispatch(setOrientation('black'))
       socket.emit('other_player_orientation', {
         roomID,
         orientation: 'black',
       })
     } else {
-      setOrientation('white')
+      dispatch(setOrientation('white'))
       socket.emit('other_player_orientation', {
         roomID,
         orientation: 'white',
@@ -44,7 +46,6 @@ export const Orientation = ({ orientation, setOrientation, roomID }: Orientation
   }
 
   socket.on('get_other_player_orientation', orientation => setOtherPlayerOrientation(orientation))
-
   socket.on('orientation_changed', () => handleOrietnation())
 
   return (
