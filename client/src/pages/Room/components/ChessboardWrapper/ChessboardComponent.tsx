@@ -7,6 +7,7 @@ import { io } from 'socket.io-client'
 import { useTypedDispatch, useTypedSelector } from '../../../../redux/store'
 import { setFen } from '../../../../redux/slices/fen'
 import { setMoveList } from '../../../../redux/slices/moveList'
+import { setOpening } from '../../../../redux/slices/opening'
 interface ChessboardComponentProps {
   game: Chess
   boardOrientation: BoardOrientation
@@ -24,6 +25,7 @@ export const ChessboardComponent = ({
   const [highlightedSquares, setHighlightedSquares] = useState<string[]>([])
   const [arrows, setArrows] = useState<Square[][]>([])
   const { moveList } = useTypedSelector(state => state.moveList)
+  const { fen } = useTypedSelector(state => state.fen)
   const socket = io('http://localhost:3000', {
     transports: ['websocket'],
   })
@@ -35,13 +37,12 @@ export const ChessboardComponent = ({
     }
   }, [roomID, socket])
 
-  const onDrop = (sourceSquare: Square, targetSquare: Square) => {
+  const onDrop = async (sourceSquare: Square, targetSquare: Square) => {
     const move = {
       from: sourceSquare,
       to: targetSquare,
       promotion: 'q',
     }
-
     if (game.move(move)) {
       const sanNotationMove = game.history().pop() as string
       const movesCopy = [...moveList.map(move => [...move])]
@@ -57,9 +58,11 @@ export const ChessboardComponent = ({
       } else {
         movesCopy[movesCopy.length - 1].push(moveObject)
       }
-
       dispatch(setFen(game.fen()))
       dispatch(setMoveList([...movesCopy]))
+      const response = await fetch(`https://explorer.lichess.ovh/masters?fen=${fen}`)
+      const jsonData = await response.json()
+      dispatch(setOpening(jsonData.opening.name))
       socket.emit('make_a_move', {
         moveList: movesCopy,
         move,

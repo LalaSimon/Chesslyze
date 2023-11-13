@@ -12,8 +12,11 @@ interface ChessboardWrapperProps {
 
 export const ChessboardWrapper = ({ roomID, game, setGame }: ChessboardWrapperProps) => {
   const { orientation } = useTypedSelector(state => state.orientation)
+  const { opening } = useTypedSelector(state => state.opening)
+
   return (
     <section className="flex flex-col items-center justify-center gap-4">
+      <span>Opening: {!opening ? '-' : opening}</span>
       <h1>You are in room nr {roomID}</h1>
 
       <ChessboardComponent
