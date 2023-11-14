@@ -8,6 +8,7 @@ import { useTypedDispatch, useTypedSelector } from '../../../../redux/store'
 import { setFen } from '../../../../redux/slices/fen'
 import { setMoveList } from '../../../../redux/slices/moveList'
 import { setOpening } from '../../../../redux/slices/opening'
+import { setMovesEval } from '../../../../redux/slices/movesEval'
 interface ChessboardComponentProps {
   game: Chess
   boardOrientation: BoardOrientation
@@ -62,6 +63,7 @@ export const ChessboardComponent = ({
       dispatch(setMoveList([...movesCopy]))
       const response = await fetch(`https://explorer.lichess.ovh/masters?fen=${fen}`)
       const jsonData = await response.json()
+      dispatch(setMovesEval(jsonData.moves))
       dispatch(setOpening(jsonData.opening.name))
       socket.emit('make_a_move', {
         moveList: movesCopy,

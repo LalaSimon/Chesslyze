@@ -7,7 +7,7 @@ interface FenState {
 export const fenSlice = createSlice({
   name: 'fen',
   initialState: {
-    fen: '',
+    fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
   } as FenState,
 
   reducers: {
