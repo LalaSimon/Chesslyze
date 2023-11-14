@@ -4,6 +4,7 @@ import fenReducer from './slices/fen'
 import orientationReducer from './slices/orientation'
 import moveListReducer from './slices/moveList'
 import openingReducer from './slices/opening'
+import movesEvalReducer from './slices/movesEval'
 
 const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ const store = configureStore({
     orientation: orientationReducer,
     moveList: moveListReducer,
     opening: openingReducer,
+    movesEval: movesEvalReducer,
   },
 })
 
