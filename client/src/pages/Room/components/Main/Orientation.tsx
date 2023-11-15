@@ -1,9 +1,9 @@
 import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
-import { Button } from '../../../shared/components/Button'
+import { Button } from '../../../../shared/components/Button'
 import { useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
-import { useTypedDispatch, useTypedSelector } from '../../../redux/store'
-import { setOrientation } from '../../../redux/slices/orientation'
+import { useTypedDispatch, useTypedSelector } from '../../../../redux/store'
+import { setOrientation } from '../../../../redux/slices/orientation'
 interface OrientationProps {
   roomID: string | undefined
 }

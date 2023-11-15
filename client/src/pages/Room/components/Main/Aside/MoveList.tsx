@@ -1,12 +1,12 @@
 import { Chessboard } from 'react-chessboard'
-import { type MoveObject } from '../../../shared/types/MoveObject'
+import { type MoveObject } from '../../../../../shared/types/MoveObject'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 import { Chess } from 'chess.js'
 import { io } from 'socket.io-client'
-import { useTypedDispatch, useTypedSelector } from '../../../redux/store'
-import { setFen } from '../../../redux/slices/fen'
-import { setMoveList } from '../../../redux/slices/moveList'
+import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
+import { setFen } from '../../../../../redux/slices/fen'
+import { setMoveList } from '../../../../../redux/slices/moveList'
 import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
 interface MoveListProps {
   game: Chess
@@ -76,10 +76,10 @@ export const MoveList = ({ game, setGame, roomID }: MoveListProps) => {
   socket.on('get_list_moves', moveList => setMoveList(moveList))
 
   return (
-    <section className="relative ml-10 flex min-w-[285px] flex-col gap-2 border">
+    <section className="relative mb-auto flex min-w-[285px] flex-col gap-2">
       <h2 className="text-center">Move list</h2>
 
-      <div className="flex h-[600px] w-full flex-col justify-start gap-6 overflow-scroll pl-10">
+      <div className="flex h-[250px] w-full flex-col justify-start gap-6 overflow-hidden pl-10 hover:overflow-y-auto">
         {moveList.map((move, index) => (
           <div className="flex w-full items-center gap-6" key={index}>
             <span>{index + 1}.</span>
@@ -105,8 +105,8 @@ export const MoveList = ({ game, setGame, roomID }: MoveListProps) => {
           </div>
         ))}
         {renderSmallBoard && (
-          <div className="pointer-events-none absolute left-[15px] top-[-300px]">
-            <Chessboard boardOrientation={orientation as BoardOrientation} boardWidth={250} position={fen} />
+          <div className="pointer-events-none absolute left-[105%] top-[25%]">
+            <Chessboard boardOrientation={orientation as BoardOrientation} boardWidth={170} position={fen} />
           </div>
         )}
       </div>

@@ -1,17 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
-
-interface MoveEvalType {
-  uci: string
-  san: string
-  game: null
-  white: number
-  black: number
-  averageRating: number
-  draws: number
-}
-
+import type { MovesEval } from '../../shared/types/MovesEval'
 interface movesEvalState {
-  movesEval: MoveEvalType[]
+  movesEval: MovesEval[]
 }
 
 export const movesEvalSlice = createSlice({
