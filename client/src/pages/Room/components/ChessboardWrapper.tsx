@@ -3,13 +3,8 @@ import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 import { ChessboardComponent } from './ChessboardWrapper/ChessboardComponent'
 import { ChessboardButtons } from './ChessboardWrapper/ChessboardButtons'
 import { Dispatch, SetStateAction } from 'react'
-import { useEffect } from 'react'
-import { useEffect } from 'react'
 import { useTypedSelector } from '../../../redux/store'
-import { useTypedDispatch } from '../../../redux/store'
-import { setMovesEval } from '../../../redux/slices/movesEval'
-import { useTypedDispatch } from '../../../redux/store'
-import { setMovesEval } from '../../../redux/slices/movesEval'
+
 interface ChessboardWrapperProps {
   roomID?: string
   game: Chess
@@ -19,18 +14,6 @@ interface ChessboardWrapperProps {
 export const ChessboardWrapper = ({ roomID, game, setGame }: ChessboardWrapperProps) => {
   const { orientation } = useTypedSelector(state => state.orientation)
   const { opening } = useTypedSelector(state => state.opening)
-  const { fen } = useTypedSelector(state => state.fen)
-  const dispatch = useTypedDispatch()
-
-  const fetchData = async () => {
-    return await fetch(`https://explorer.lichess.ovh/masters?fen=${fen}`)
-      .then(res => res.json())
-      .then(data => dispatch(setMovesEval(data.moves)))
-  }
-  useEffect(() => {
-    fetchData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   return (
     <section className="flex flex-col items-center justify-center gap-4">
@@ -43,14 +26,6 @@ export const ChessboardWrapper = ({ roomID, game, setGame }: ChessboardWrapperPr
       />
       <span>Opening: {!opening ? '-' : opening}</span>
       <ChessboardButtons setGame={setGame} roomID={roomID} />
-      <div>
-        Best moves:{' '}
-        {!movesEval
-          ? null
-          : movesEval.map(dataObj => {
-              return <p>{dataObj.san}</p>
-            })}
-      </div>
     </section>
   )
 }
