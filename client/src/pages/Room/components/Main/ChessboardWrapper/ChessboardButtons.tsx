@@ -1,10 +1,10 @@
-import { Button } from '../../../../shared/components/Button'
+import { Button } from '../../../../../shared/components/Button'
 import { Dispatch, SetStateAction } from 'react'
 import { Chess } from 'chess.js'
 import { io } from 'socket.io-client'
-import { useTypedDispatch } from '../../../../redux/store'
-import { clearFen } from '../../../../redux/slices/fen'
-import { clearMoveList } from '../../../../redux/slices/moveList'
+import { useTypedDispatch } from '../../../../../redux/store'
+import { clearFen } from '../../../../../redux/slices/fen'
+import { clearMoveList } from '../../../../../redux/slices/moveList'
 interface ChessboardButtonsProps {
   setGame: Dispatch<SetStateAction<Chess>>
   roomID: string | undefined

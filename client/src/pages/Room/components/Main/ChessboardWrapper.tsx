@@ -3,7 +3,7 @@ import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 import { ChessboardComponent } from './ChessboardWrapper/ChessboardComponent'
 import { ChessboardButtons } from './ChessboardWrapper/ChessboardButtons'
 import { Dispatch, SetStateAction } from 'react'
-import { useTypedSelector } from '../../../redux/store'
+import { useTypedSelector } from '../../../../redux/store'
 
 interface ChessboardWrapperProps {
   roomID?: string
@@ -13,7 +13,6 @@ interface ChessboardWrapperProps {
 
 export const ChessboardWrapper = ({ roomID, game, setGame }: ChessboardWrapperProps) => {
   const { orientation } = useTypedSelector(state => state.orientation)
-  const { opening } = useTypedSelector(state => state.opening)
 
   return (
     <section className="flex flex-col items-center justify-center gap-4">
@@ -24,7 +23,7 @@ export const ChessboardWrapper = ({ roomID, game, setGame }: ChessboardWrapperPr
         boardOrientation={orientation as BoardOrientation}
         roomID={roomID!}
       />
-      <span>Opening: {!opening ? '-' : opening}</span>
+
       <ChessboardButtons setGame={setGame} roomID={roomID} />
     </section>
   )

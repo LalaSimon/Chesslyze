@@ -2,13 +2,13 @@ import { Chessboard } from 'react-chessboard'
 import { Square, Chess } from 'chess.js'
 import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 import { SetStateAction, Dispatch, useState, useEffect } from 'react'
-import { MoveObject } from '../../../../shared/types/MoveObject'
+import { MoveObject } from '../../../../../shared/types/MoveObject'
 import { io } from 'socket.io-client'
-import { useTypedDispatch, useTypedSelector } from '../../../../redux/store'
-import { setFen } from '../../../../redux/slices/fen'
-import { setMoveList } from '../../../../redux/slices/moveList'
-import { setOpening } from '../../../../redux/slices/opening'
-import { setMovesEval } from '../../../../redux/slices/movesEval'
+import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
+import { setFen } from '../../../../../redux/slices/fen'
+import { setMoveList } from '../../../../../redux/slices/moveList'
+import { setOpening } from '../../../../../redux/slices/opening'
+import { setMovesEval } from '../../../../../redux/slices/movesEval'
 interface ChessboardComponentProps {
   game: Chess
   boardOrientation: BoardOrientation
@@ -150,7 +150,7 @@ export const ChessboardComponent = ({
         onPieceDrop={onDrop}
         position={game.fen()}
         boardOrientation={boardOrientation}
-        boardWidth={650}
+        boardWidth={570}
         customSquareStyles={{
           ...highlightedSquares.reduce(
             (styles: Record<string, React.CSSProperties>, square) => {
