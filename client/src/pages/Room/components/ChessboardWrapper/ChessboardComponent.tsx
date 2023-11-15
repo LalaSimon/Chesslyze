@@ -58,13 +58,14 @@ export const ChessboardComponent = ({
       } else {
         movesCopy[movesCopy.length - 1].push(moveObject)
       }
+
       dispatch(setFen(game.fen()))
       dispatch(setMoveList([...movesCopy]))
       const response = await fetch(`https://explorer.lichess.ovh/masters?fen=${game.fen()}`)
       const jsonData = await response.json()
-      console.log(jsonData.moves)
       dispatch(setMovesEval(jsonData.moves))
       dispatch(setOpening(jsonData.opening.name))
+
       socket.emit('make_a_move', {
         moveList: movesCopy,
         move,

@@ -4,7 +4,10 @@ import { ChessboardComponent } from './ChessboardWrapper/ChessboardComponent'
 import { ChessboardButtons } from './ChessboardWrapper/ChessboardButtons'
 import { Dispatch, SetStateAction } from 'react'
 import { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useTypedSelector } from '../../../redux/store'
+import { useTypedDispatch } from '../../../redux/store'
+import { setMovesEval } from '../../../redux/slices/movesEval'
 import { useTypedDispatch } from '../../../redux/store'
 import { setMovesEval } from '../../../redux/slices/movesEval'
 interface ChessboardWrapperProps {
@@ -40,6 +43,14 @@ export const ChessboardWrapper = ({ roomID, game, setGame }: ChessboardWrapperPr
       />
       <span>Opening: {!opening ? '-' : opening}</span>
       <ChessboardButtons setGame={setGame} roomID={roomID} />
+      <div>
+        Best moves:{' '}
+        {!movesEval
+          ? null
+          : movesEval.map(dataObj => {
+              return <p>{dataObj.san}</p>
+            })}
+      </div>
     </section>
   )
 }
