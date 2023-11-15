@@ -7,6 +7,7 @@ interface MoveEvalType {
   white: number
   black: number
   averageRating: number
+  draws: number
 }
 
 interface movesEvalState {
