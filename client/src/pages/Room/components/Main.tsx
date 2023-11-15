@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Chess } from 'chess.js'
-import { Orientation } from './Orientation'
-import { ChessboardWrapper } from './ChessboardWrapper'
-import { Aside } from './Aside'
+import { Orientation } from './Main/Orientation'
+import { ChessboardWrapper } from './Main/ChessboardWrapper'
+import { Aside } from './Main/Aside'
 
 interface MainProps {
   roomID: string

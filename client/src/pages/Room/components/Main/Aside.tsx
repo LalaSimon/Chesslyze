@@ -2,7 +2,7 @@ import { Chess } from 'chess.js'
 import { Dispatch, SetStateAction } from 'react'
 import { MoveList } from './Aside/MoveList'
 import { OpeningTable } from './Aside/OpeningTable'
-import { OpeningName } from './Aside/Opening'
+import { OpeningName } from './Aside/OpeningName'
 
 interface AsideProps {
   roomID?: string
