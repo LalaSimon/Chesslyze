@@ -6,6 +6,7 @@ interface MoveEvalType {
   game: null
   white: number
   black: number
+  draws: number
   averageRating: number
 }
 

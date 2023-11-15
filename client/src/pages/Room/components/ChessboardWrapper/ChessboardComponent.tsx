@@ -26,7 +26,6 @@ export const ChessboardComponent = ({
   const [highlightedSquares, setHighlightedSquares] = useState<string[]>([])
   const [arrows, setArrows] = useState<Square[][]>([])
   const { moveList } = useTypedSelector(state => state.moveList)
-  const { fen } = useTypedSelector(state => state.fen)
   const socket = io('http://localhost:3000', {
     transports: ['websocket'],
   })
@@ -61,8 +60,9 @@ export const ChessboardComponent = ({
       }
       dispatch(setFen(game.fen()))
       dispatch(setMoveList([...movesCopy]))
-      const response = await fetch(`https://explorer.lichess.ovh/masters?fen=${fen}`)
+      const response = await fetch(`https://explorer.lichess.ovh/masters?fen=${game.fen()}`)
       const jsonData = await response.json()
+      console.log(jsonData.moves)
       dispatch(setMovesEval(jsonData.moves))
       dispatch(setOpening(jsonData.opening.name))
       socket.emit('make_a_move', {

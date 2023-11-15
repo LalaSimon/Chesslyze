@@ -6,7 +6,7 @@ const Room = () => {
   const { roomID } = useParams()
 
   return (
-    <div className="flex h-[100vh] items-center justify-center gap-2">
+    <div className="mt-10 flex h-[100vh] items-center justify-center gap-2">
       <Header roomID={roomID!} />
       <Main roomID={roomID!} />
     </div>
