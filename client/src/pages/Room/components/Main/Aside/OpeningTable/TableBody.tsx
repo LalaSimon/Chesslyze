@@ -11,6 +11,7 @@ export const TableBody = ({ movesEval }: TableBodyProps) => {
         <tr key={index} className="border">
           <td>{index + 1}.</td>
           <td>{dataObj.san}</td>
+          <td>{dataObj.black + dataObj.white + dataObj.draws}</td>
           <td className="flex w-full">
             <div
               className="flex-1 bg-white"

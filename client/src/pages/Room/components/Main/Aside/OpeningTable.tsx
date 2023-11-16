@@ -23,8 +23,14 @@ export const OpeningTable = () => {
     <span>loading - please wait...</span>
   ) : (
     <table className="w-full border-collapse overflow-hidden border text-center hover:overflow-auto">
-      <TableHeader />
-      <TableBody movesEval={movesEval} />
+      {movesEval.length === 0 ? (
+        <span>No records found</span>
+      ) : (
+        <>
+          <TableHeader />
+          <TableBody movesEval={movesEval} />
+        </>
+      )}
     </table>
   )
 }
