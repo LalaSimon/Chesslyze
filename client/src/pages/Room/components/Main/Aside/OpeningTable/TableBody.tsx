@@ -46,7 +46,7 @@ export const TableBody = ({ movesEval }: TableBodyProps) => {
                 ).toFixed(2)}%`,
               }}>
               {dataObj.black !== 0
-                ? ((dataObj.white / (dataObj.black + dataObj.white + dataObj.draws)) * 100).toFixed() + '%'
+                ? ((dataObj.black / (dataObj.black + dataObj.white + dataObj.draws)) * 100).toFixed() + '%'
                 : '0%'}
             </div>
           </td>
