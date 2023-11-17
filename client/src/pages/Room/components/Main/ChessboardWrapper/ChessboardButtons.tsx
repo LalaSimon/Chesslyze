@@ -5,6 +5,9 @@ import { io } from 'socket.io-client'
 import { useTypedDispatch } from '../../../../../redux/store'
 import { clearFen } from '../../../../../redux/slices/fen'
 import { clearMoveList } from '../../../../../redux/slices/moveList'
+import { setOpening } from '../../../../../redux/slices/opening'
+import { fetchMovesEval } from '../../../../../shared/utils/MoveList/LichesAPI'
+
 interface ChessboardButtonsProps {
   setGame: Dispatch<SetStateAction<Chess>>
   roomID: string | undefined
@@ -18,9 +21,11 @@ export const ChessboardButtons = ({ setGame, roomID }: ChessboardButtonsProps) =
 
   socket.emit('join_room', roomID)
 
-  const clearBoard = () => {
+  const clearBoard = async () => {
     dispatch(clearFen())
     dispatch(clearMoveList())
+    dispatch(setOpening(''))
+    await fetchMovesEval('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', dispatch)
     setGame(new Chess())
     socket.emit('clear_board', { roomID })
     socket.disconnect()

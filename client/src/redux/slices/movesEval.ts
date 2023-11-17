@@ -12,7 +12,6 @@ export const movesEvalSlice = createSlice({
 
   reducers: {
     setMovesEval: (state, action) => {
-      console.log(action.payload)
       return { ...state, movesEval: action.payload }
     },
     clearMoves: state => {
