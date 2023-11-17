@@ -8,6 +8,7 @@ import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
 import { setFen } from '../../../../../redux/slices/fen'
 import { setMoveList } from '../../../../../redux/slices/moveList'
 import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
+import { fetchOpening } from '../../../../../shared/utils/MoveList/LichesAPI'
 interface MoveListProps {
   game: Chess
   setGame: Dispatch<SetStateAction<Chess>>
@@ -32,10 +33,11 @@ export const MoveList = ({ game, setGame, roomID }: MoveListProps) => {
     }
   }, [roomID, socket])
 
-  const handleSetGame = (fen: string) => {
+  const handleSetGame = async (fen: string) => {
     dispatch(setFen(fen))
     setGame(new Chess(fen))
     updateMovesList(fen, moveList, setMoveList)
+    await fetchOpening(fen, dispatch)
     socket.emit('set_game', {
       fen,
       roomID,
