@@ -1,4 +1,4 @@
-const socket = require('./socket/Socket')
+const socket = require('./socket/socket')
 const Express = require('express')
 const app = new Express()
 const http = require('http')
