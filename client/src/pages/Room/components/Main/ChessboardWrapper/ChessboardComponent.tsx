@@ -9,6 +9,7 @@ import { setFen } from '../../../../../redux/slices/fen'
 import { setMoveList } from '../../../../../redux/slices/moveList'
 import { setOpening } from '../../../../../redux/slices/opening'
 import { setMovesEval } from '../../../../../redux/slices/movesEval'
+
 interface ChessboardComponentProps {
   game: Chess
   boardOrientation: BoardOrientation

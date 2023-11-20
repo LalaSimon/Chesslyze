@@ -16,16 +16,12 @@ export const OpeningTable = () => {
 
   return !movesEval ? (
     <span>loading - please wait...</span>
+  ) : movesEval.length === 0 ? (
+    <span>No records found</span>
   ) : (
     <table className="w-full border-collapse overflow-hidden border text-center hover:overflow-auto">
-      {movesEval.length === 0 ? (
-        <span>No records found</span>
-      ) : (
-        <>
-          <TableHeader />
-          <TableBody movesEval={movesEval} />
-        </>
-      )}
+      <TableHeader />
+      <TableBody movesEval={movesEval} />
     </table>
   )
 }
