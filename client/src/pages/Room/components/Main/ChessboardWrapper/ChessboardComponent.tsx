@@ -27,6 +27,7 @@ export const ChessboardComponent = ({
   const [highlightedSquares, setHighlightedSquares] = useState<string[]>([])
   const [arrows, setArrows] = useState<Square[][]>([])
   const { moveList } = useTypedSelector(state => state.moveList)
+  const { fen } = useTypedSelector(state => state.fen)
   const socket = io('http://localhost:3000', {
     transports: ['websocket'],
   })
@@ -151,7 +152,7 @@ export const ChessboardComponent = ({
         customArrows={arrows}
         onArrowsChange={arrowDrow}
         onPieceDrop={onDrop}
-        position={game.fen()}
+        position={fen}
         boardOrientation={boardOrientation}
         boardWidth={570}
         customSquareStyles={{

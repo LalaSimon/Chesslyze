@@ -4,6 +4,7 @@ import { ChessboardComponent } from './ChessboardWrapper/ChessboardComponent'
 import { ChessboardButtons } from './ChessboardWrapper/ChessboardButtons'
 import { Dispatch, SetStateAction } from 'react'
 import { useTypedSelector } from '../../../../redux/store'
+import { ChessboardFenInput } from './ChessboardWrapper/ChessboardFenInput'
 
 interface ChessboardWrapperProps {
   roomID?: string
@@ -25,6 +26,7 @@ export const ChessboardWrapper = ({ roomID, game, setGame }: ChessboardWrapperPr
       />
 
       <ChessboardButtons setGame={setGame} roomID={roomID} />
+      <ChessboardFenInput setGame={setGame} />
     </section>
   )
 }
