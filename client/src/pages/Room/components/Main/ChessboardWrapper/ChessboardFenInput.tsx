@@ -38,26 +38,28 @@ export const ChessboardFenInput = ({ setGame }: ChessboardFenInputProps) => {
 
   return (
     <form className="flex flex-col items-center justify-center gap-2" onSubmit={onSubmit}>
-      <input
-        onChange={e => setInputValue(e.target.value)}
-        value={inputValue}
-        type="text"
-        placeholder="Paste fen"
-        className="w-[580px] rounded-xl text-center"
-      />
       <div className="flex gap-2">
+        <input
+          onChange={e => setInputValue(e.target.value)}
+          value={!inputValue ? fen : inputValue}
+          type="text"
+          placeholder="Paste fen"
+          className="w-[580px] rounded-xl text-center"
+        />
         <button
-          className="max-w-[150px] rounded-xl border border-gray-400 p-2 text-center transition duration-150 ease-in-out hover:scale-110 hover:cursor-pointer hover:bg-gray-100 active:shadow-inner active:shadow-gray-500"
+          className={`${
+            inputValue ? 'blob' : null
+          } max-w-[150px] rounded-xl border border-gray-400 p-2 text-center transition duration-150 ease-in-out hover:scale-110 hover:cursor-pointer hover:bg-gray-100 active:shadow-inner active:shadow-gray-500`}
           type="submit">
           Load Fen
         </button>
-        <button
-          onClick={copyFen}
-          className="max-w-[150px] rounded-xl border border-gray-400 p-2 text-center transition duration-150 ease-in-out hover:scale-110 hover:cursor-pointer hover:bg-gray-100 active:shadow-inner active:shadow-gray-500"
-          type="button">
-          Copy fen
-        </button>
       </div>
+      <button
+        onClick={copyFen}
+        className="max-w-[150px] rounded-xl border border-gray-400 p-2 text-center transition duration-150 ease-in-out hover:scale-110 hover:cursor-pointer hover:bg-gray-100 active:shadow-inner active:shadow-gray-500"
+        type="button">
+        Copy fen
+      </button>
     </form>
   )
 }
