@@ -9,6 +9,7 @@ import { setFen } from '../../../../../redux/slices/fen'
 import { setMoveList } from '../../../../../redux/slices/moveList'
 import { setOpening } from '../../../../../redux/slices/opening'
 import { setMovesEval } from '../../../../../redux/slices/movesEval'
+import { fetchMovesEval, fetchOpening } from '../../../../../shared/utils/MoveList/LichesAPI'
 
 interface ChessboardComponentProps {
   game: Chess
@@ -27,7 +28,6 @@ export const ChessboardComponent = ({
   const [highlightedSquares, setHighlightedSquares] = useState<string[]>([])
   const [arrows, setArrows] = useState<Square[][]>([])
   const { moveList } = useTypedSelector(state => state.moveList)
-  const { fen } = useTypedSelector(state => state.fen)
   const socket = io('http://localhost:3000', {
     transports: ['websocket'],
   })
@@ -61,6 +61,12 @@ export const ChessboardComponent = ({
         movesCopy[movesCopy.length - 1].push(moveObject)
       }
 
+      socket.emit('make_a_move', {
+        moveList: movesCopy,
+        move,
+        roomID,
+      })
+
       dispatch(setFen(game.fen()))
       dispatch(setMoveList([...movesCopy]))
       const response = await fetch(`https://explorer.lichess.ovh/masters?fen=${game.fen()}`)
@@ -70,11 +76,6 @@ export const ChessboardComponent = ({
       } else dispatch(setMovesEval(''))
       dispatch(setOpening(jsonData.opening.name))
 
-      socket.emit('make_a_move', {
-        moveList: movesCopy,
-        move,
-        roomID,
-      })
       return true
     } else {
       return false
@@ -129,10 +130,13 @@ export const ChessboardComponent = ({
     setHighlightedSquares([])
   })
 
-  socket.on('move_made', data => {
+  socket.on('move_made', async data => {
     if (game.move(data.move)) {
       setGame(game)
       dispatch(setMoveList(data.moveList))
+      dispatch(setFen(game.fen()))
+      await fetchOpening(game.fen(), dispatch)
+      await fetchMovesEval(game.fen(), dispatch)
       return true
     } else {
       return false
@@ -152,7 +156,7 @@ export const ChessboardComponent = ({
         customArrows={arrows}
         onArrowsChange={arrowDrow}
         onPieceDrop={onDrop}
-        position={fen}
+        position={game.fen()}
         boardOrientation={boardOrientation}
         boardWidth={570}
         customSquareStyles={{

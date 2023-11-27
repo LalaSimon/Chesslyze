@@ -31,12 +31,17 @@ export const ChessboardButtons = ({ setGame, roomID }: ChessboardButtonsProps) =
     socket.disconnect()
   }
 
-  socket.on('board_cleared', () => {
-    dispatch(clearMoveList())
-    dispatch(clearFen())
-    setGame(new Chess())
+  socket.on('board_cleared', async () => {
+    try {
+      await fetchMovesEval('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', dispatch)
+      dispatch(clearMoveList())
+      dispatch(clearFen())
+      setGame(new Chess())
+      dispatch(setOpening(''))
+    } catch (error) {
+      console.log('Wystąpił błąd:', error)
+    }
   })
-
   return (
     <section className="flex gap-5">
       <Button btnText="Undo" />
