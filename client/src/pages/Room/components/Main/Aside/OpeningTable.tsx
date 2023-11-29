@@ -1,5 +1,5 @@
 import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
-import { fetchMovesEval } from '../../../../../shared/utils/MoveList/LichesAPI'
+import { fetchMovesEval } from '../../../../../shared/utils/LichesAPI'
 import { useEffect } from 'react'
 import { TableHeader } from './OpeningTable/TableHeader'
 import { TableBody } from './OpeningTable/TableBody'

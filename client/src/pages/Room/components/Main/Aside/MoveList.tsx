@@ -8,7 +8,7 @@ import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
 import { setFen } from '../../../../../redux/slices/fen'
 import { setMoveList } from '../../../../../redux/slices/moveList'
 import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
-import { fetchOpening } from '../../../../../shared/utils/MoveList/LichesAPI'
+import { fetchOpening } from '../../../../../shared/utils/LichesAPI'
 interface MoveListProps {
   game: Chess
   setGame: Dispatch<SetStateAction<Chess>>

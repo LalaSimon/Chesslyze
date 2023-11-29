@@ -9,7 +9,7 @@ import { setFen } from '../../../../../redux/slices/fen'
 import { setMoveList } from '../../../../../redux/slices/moveList'
 import { setOpening } from '../../../../../redux/slices/opening'
 import { setMovesEval } from '../../../../../redux/slices/movesEval'
-import { fetchMovesEval, fetchOpening } from '../../../../../shared/utils/MoveList/LichesAPI'
+import { fetchMovesEval, fetchOpening } from '../../../../../shared/utils/LichesAPI'
 
 interface ChessboardComponentProps {
   game: Chess

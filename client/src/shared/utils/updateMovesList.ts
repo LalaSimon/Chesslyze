@@ -1,4 +1,4 @@
-import { MoveObject } from '../../types/MoveObject'
+import { MoveObject } from '../types/MoveObject'
 import { Dispatch, SetStateAction } from 'react'
 
 interface UpdateMovesList {
