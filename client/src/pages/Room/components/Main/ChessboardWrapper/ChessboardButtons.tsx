@@ -6,7 +6,7 @@ import { useTypedDispatch } from '../../../../../redux/store'
 import { clearFen } from '../../../../../redux/slices/fen'
 import { clearMoveList } from '../../../../../redux/slices/moveList'
 import { setOpening } from '../../../../../redux/slices/opening'
-import { fetchMovesEval } from '../../../../../shared/utils/MoveList/LichesAPI'
+import { fetchMovesEval } from '../../../../../shared/utils/LichesAPI'
 
 interface ChessboardButtonsProps {
   setGame: Dispatch<SetStateAction<Chess>>

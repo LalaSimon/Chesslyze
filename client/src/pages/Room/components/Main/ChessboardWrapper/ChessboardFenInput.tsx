@@ -1,6 +1,6 @@
 import { setFen } from '../../../../../redux/slices/fen'
-import { fetchMovesEval } from '../../../../../shared/utils/MoveList/LichesAPI'
-import { fetchOpening } from '../../../../../shared/utils/MoveList/LichesAPI'
+import { fetchMovesEval } from '../../../../../shared/utils/LichesAPI'
+import { fetchOpening } from '../../../../../shared/utils/LichesAPI'
 import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
 import { useState, FormEvent, Dispatch, SetStateAction } from 'react'
 
