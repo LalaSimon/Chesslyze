@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import socketService from '../../../services/SocketService'
+import SocketService from '../../../services/SocketService'
 import GameService from '../../../services/GameService'
 import { Button } from '../../../shared/components/Button'
 
@@ -14,7 +14,7 @@ export const Main = () => {
     setRoomID(e.currentTarget.value)
   }
   const connectSocket = async () => {
-    await socketService.connect(socketURL).catch((err: string) => {
+    await SocketService.connect(socketURL).catch((err: string) => {
       console.log('error:', err)
     })
   }
@@ -23,7 +23,7 @@ export const Main = () => {
   }, [])
 
   const joinRoom = async () => {
-    const socket = socketService.socket
+    const socket = SocketService.socket
     if (!roomID || !socket) return
     GameService.joinRoom(socket, roomID, navigate)
   }
