@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Chessboard } from 'react-chessboard'
 import { Square, Chess } from 'chess.js'
 import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
@@ -66,7 +67,7 @@ export const ChessboardComponent = ({
       } else {
         movesCopy[movesCopy.length - 1].push(moveObject)
       }
-      if (SocketService.socket) GameService.updateGame(SocketService.socket!, moveList, move, roomID)
+      if (SocketService.socket) GameService.gameUpdate(SocketService.socket!, moveList, move, roomID)
 
       dispatch(setFen(game.fen()))
       dispatch(setMoveList([...movesCopy]))
@@ -86,16 +87,10 @@ export const ChessboardComponent = ({
   const highlightSquare = (square: string) => {
     if (!highlightedSquares.includes(square)) {
       setHighlightedSquares([...highlightedSquares, square])
-      socket.emit('send_highlight_square', {
-        square,
-        roomID,
-      })
+      if (SocketService.socket) GameService.highlightSquare(socket, square, roomID)
     } else {
       setHighlightedSquares(highlightedSquares.filter(s => s !== square))
-      socket.emit('send_highlight_square', {
-        square,
-        roomID,
-      })
+      if (SocketService.socket) GameService.highlightSquare(socket, square, roomID)
     }
   }
 
@@ -131,11 +126,11 @@ export const ChessboardComponent = ({
     setHighlightedSquares([])
   })
 
-  socket.on('get_highlight_square', square =>
+  const handleHiglightSquareUpdate = (square: string) => {
     !highlightedSquares.includes(square)
       ? setHighlightedSquares(prevHighlightedSquares => [...prevHighlightedSquares, square])
       : setHighlightedSquares(prevHighlightedSquares => prevHighlightedSquares.filter(s => s !== square))
-  )
+  }
 
   useEffect(() => {
     const handleGameUpdate = async (data: IMoveData) => {
@@ -150,12 +145,16 @@ export const ChessboardComponent = ({
         return false
       }
     }
+
     if (SocketService.socket) GameService.onGameUpdate(SocketService.socket)
     SocketService.socket?.on('move_made', handleGameUpdate)
+    if (SocketService.socket) GameService.onHighlightSquareUpdate(SocketService.socket)
+    SocketService.socket?.on('get_highlight_square', handleHiglightSquareUpdate)
 
     return () => {
       if (SocketService.socket) {
         SocketService.socket.off('move_made', handleGameUpdate)
+        SocketService.socket.off('get_highlight_square', handleHiglightSquareUpdate)
       }
     }
   }, [dispatch, game, setGame])

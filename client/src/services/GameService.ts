@@ -14,15 +14,30 @@ class GameService {
       })
     })
   }
-  public async updateGame(socket: Socket, movesCopy: MoveObject[][], move: object, roomID: string) {
+
+  public async gameUpdate(socket: Socket, movesCopy: MoveObject[][], move: object, roomID: string) {
     socket.emit('make_a_move', {
       moveList: movesCopy,
       move,
       roomID,
     })
   }
+
   public onGameUpdate(socket: Socket) {
     socket.on('move_made', data => {
+      data
+    })
+  }
+
+  public async highlightSquare(socket: Socket, square: string, roomID: string) {
+    socket.emit('send_highlight_square', {
+      square,
+      roomID,
+    })
+  }
+
+  public onHighlightSquareUpdate(socket: Socket) {
+    socket.on('get_highlight_square', data => {
       data
     })
   }
