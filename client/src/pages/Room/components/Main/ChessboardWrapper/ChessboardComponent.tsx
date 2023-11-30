@@ -10,12 +10,25 @@ import { setMoveList } from '../../../../../redux/slices/moveList'
 import { setOpening } from '../../../../../redux/slices/opening'
 import { setMovesEval } from '../../../../../redux/slices/movesEval'
 import { fetchMovesEval, fetchOpening } from '../../../../../shared/utils/LichesAPI'
+import GameService from '../../../../../services/GameService'
+import SocketService from '../../../../../services/SocketService'
 
 interface ChessboardComponentProps {
   game: Chess
   boardOrientation: BoardOrientation
   roomID: string
   setGame: Dispatch<SetStateAction<Chess>>
+}
+
+interface IMove {
+  from: string
+  to: string
+  promotion: string
+}
+
+interface IMoveData {
+  move: IMove
+  moveList: MoveObject[][]
 }
 
 export const ChessboardComponent = ({
@@ -32,15 +45,8 @@ export const ChessboardComponent = ({
     transports: ['websocket'],
   })
 
-  useEffect(() => {
-    socket.emit('join_room', roomID)
-    return () => {
-      socket.disconnect()
-    }
-  }, [roomID, socket])
-
   const onDrop = async (sourceSquare: Square, targetSquare: Square) => {
-    const move = {
+    const move: IMove = {
       from: sourceSquare,
       to: targetSquare,
       promotion: 'q',
@@ -60,12 +66,7 @@ export const ChessboardComponent = ({
       } else {
         movesCopy[movesCopy.length - 1].push(moveObject)
       }
-
-      socket.emit('make_a_move', {
-        moveList: movesCopy,
-        move,
-        roomID,
-      })
+      if (SocketService.socket) GameService.updateGame(SocketService.socket!, moveList, move, roomID)
 
       dispatch(setFen(game.fen()))
       dispatch(setMoveList([...movesCopy]))
@@ -130,24 +131,34 @@ export const ChessboardComponent = ({
     setHighlightedSquares([])
   })
 
-  socket.on('move_made', async data => {
-    if (game.move(data.move)) {
-      setGame(game)
-      dispatch(setMoveList(data.moveList))
-      dispatch(setFen(game.fen()))
-      await fetchOpening(game.fen(), dispatch)
-      await fetchMovesEval(game.fen(), dispatch)
-      return true
-    } else {
-      return false
-    }
-  })
-
   socket.on('get_highlight_square', square =>
     !highlightedSquares.includes(square)
       ? setHighlightedSquares(prevHighlightedSquares => [...prevHighlightedSquares, square])
       : setHighlightedSquares(prevHighlightedSquares => prevHighlightedSquares.filter(s => s !== square))
   )
+
+  useEffect(() => {
+    const handleGameUpdate = async (data: IMoveData) => {
+      if (game.move(data.move)) {
+        setGame(game)
+        dispatch(setMoveList(data.moveList))
+        dispatch(setFen(game.fen()))
+        await fetchOpening(game.fen(), dispatch)
+        await fetchMovesEval(game.fen(), dispatch)
+        return true
+      } else {
+        return false
+      }
+    }
+    if (SocketService.socket) GameService.onGameUpdate(SocketService.socket)
+    SocketService.socket?.on('move_made', handleGameUpdate)
+
+    return () => {
+      if (SocketService.socket) {
+        SocketService.socket.off('move_made', handleGameUpdate)
+      }
+    }
+  }, [dispatch, game, setGame])
 
   return (
     <div onClick={clearHighlightedSquares}>
