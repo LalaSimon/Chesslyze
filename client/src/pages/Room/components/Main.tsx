@@ -4,7 +4,7 @@ import { Orientation } from './Main/Orientation'
 import { ChessboardWrapper } from './Main/ChessboardWrapper'
 import { Aside } from './Main/Aside'
 
-interface MainProps {
+type MainProps = {
   roomID: string
 }
 

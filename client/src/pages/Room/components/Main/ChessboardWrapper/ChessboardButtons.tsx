@@ -8,7 +8,7 @@ import { clearMoveList } from '../../../../../redux/slices/moveList'
 import { setOpening } from '../../../../../redux/slices/opening'
 import { fetchMovesEval } from '../../../../../shared/utils/LichesAPI'
 
-interface ChessboardButtonsProps {
+type ChessboardButtonsProps = {
   setGame: Dispatch<SetStateAction<Chess>>
   roomID: string | undefined
 }

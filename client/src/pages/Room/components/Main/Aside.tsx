@@ -4,7 +4,7 @@ import { MoveList } from './Aside/MoveList'
 import { OpeningTable } from './Aside/OpeningTable'
 import { OpeningName } from './Aside/OpeningName'
 
-interface AsideProps {
+type AsideProps = {
   roomID?: string
   game: Chess
   setGame: Dispatch<SetStateAction<Chess>>

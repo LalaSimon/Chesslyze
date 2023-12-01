@@ -1,4 +1,4 @@
-export interface MovesEval {
+export type MovesEval = {
   uci: string
   san: string
   game: null
