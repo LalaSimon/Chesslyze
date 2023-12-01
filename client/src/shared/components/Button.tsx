@@ -1,4 +1,4 @@
-interface ButtonProps {
+type ButtonProps = {
   callback?: () => void
   btnText: string
   description?: string

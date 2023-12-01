@@ -9,7 +9,8 @@ import { setFen } from '../../../../../redux/slices/fen'
 import { setMoveList } from '../../../../../redux/slices/moveList'
 import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
 import { fetchOpening } from '../../../../../shared/utils/LichesAPI'
-interface MoveListProps {
+
+type MoveListProps = {
   game: Chess
   setGame: Dispatch<SetStateAction<Chess>>
   roomID: string | undefined

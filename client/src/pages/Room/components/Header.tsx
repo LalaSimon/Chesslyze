@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { io } from 'socket.io-client'
-interface HeaderProps {
+
+type HeaderProps = {
   roomID: string
 }
 

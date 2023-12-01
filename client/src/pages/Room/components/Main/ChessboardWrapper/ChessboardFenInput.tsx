@@ -3,10 +3,9 @@ import { fetchMovesEval } from '../../../../../shared/utils/LichesAPI'
 import { fetchOpening } from '../../../../../shared/utils/LichesAPI'
 import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
 import { useState, FormEvent, Dispatch, SetStateAction } from 'react'
-
 import { Chess } from 'chess.js'
 
-interface ChessboardFenInputProps {
+type ChessboardFenInputProps = {
   setGame: Dispatch<SetStateAction<Chess>>
 }
 

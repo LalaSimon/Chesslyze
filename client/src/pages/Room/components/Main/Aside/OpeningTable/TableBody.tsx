@@ -1,6 +1,6 @@
 import type { MovesEval } from '../../../../../../shared/types/MovesEval'
 
-interface TableBodyProps {
+type TableBodyProps = {
   movesEval: MovesEval[]
 }
 
