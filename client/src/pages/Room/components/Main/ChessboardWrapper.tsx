@@ -6,7 +6,7 @@ import { Dispatch, SetStateAction } from 'react'
 import { useTypedSelector } from '../../../../redux/store'
 import { ChessboardFenInput } from './ChessboardWrapper/ChessboardFenInput'
 
-interface ChessboardWrapperProps {
+type ChessboardWrapperProps = {
   roomID?: string
   game: Chess
   setGame: Dispatch<SetStateAction<Chess>>

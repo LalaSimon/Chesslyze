@@ -14,21 +14,21 @@ import { fetchMovesEval, fetchOpening } from '../../../../../shared/utils/Liches
 import GameService from '../../../../../services/GameService'
 import SocketService from '../../../../../services/SocketService'
 
-interface ChessboardComponentProps {
+type ChessboardComponentProps = {
   game: Chess
   boardOrientation: BoardOrientation
   roomID: string
   setGame: Dispatch<SetStateAction<Chess>>
 }
 
-interface IMove {
+type TMove = {
   from: string
   to: string
   promotion: string
 }
 
 interface IMoveData {
-  move: IMove
+  move: TMove
   moveList: MoveObject[][]
 }
 
@@ -47,7 +47,7 @@ export const ChessboardComponent = ({
   })
 
   const onDrop = async (sourceSquare: Square, targetSquare: Square) => {
-    const move: IMove = {
+    const move: TMove = {
       from: sourceSquare,
       to: targetSquare,
       promotion: 'q',

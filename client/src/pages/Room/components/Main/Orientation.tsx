@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
 import { useTypedDispatch, useTypedSelector } from '../../../../redux/store'
 import { setOrientation } from '../../../../redux/slices/orientation'
-interface OrientationProps {
+
+type OrientationProps = {
   roomID: string | undefined
 }
 
