@@ -44,6 +44,7 @@ export const ChessboardComponent = ({
   const socket = io('http://localhost:3000', {
     transports: ['websocket'],
   })
+
   const dispatch = useTypedDispatch()
 
   const onDrop = async (sourceSquare: Square, targetSquare: Square) => {
@@ -89,22 +90,13 @@ export const ChessboardComponent = ({
   const arrowDrow = (arrowsData: Square[][]) => {
     if (arrowsData.length === 0 && arrowsData !== arrows) {
       setArrows([])
-      socket.emit('draw_arrows', {
-        arrowsData,
-        roomID,
-      })
+      if (SocketService.socket) GameService.drawArrow(socket, arrowsData, roomID)
     } else {
       if (arrowsData.flat().join() === arrows.flat().join()) return
       setArrows(arrowsData)
-      socket.emit('draw_arrows', {
-        arrowsData,
-        roomID,
-      })
+      if (SocketService.socket) GameService.drawArrow(socket, arrowsData, roomID)
     }
   }
-
-  socket.on('arrows_cleared', () => setArrows([]))
-  socket.on('arrows_drawn', arrowsData => setArrows(arrowsData))
 
   const highlightSquare = (square: string) => {
     if (SocketService.socket) GameService.highlightSquare(socket, square, roomID)
@@ -115,6 +107,9 @@ export const ChessboardComponent = ({
   }
 
   useEffect(() => {
+    const handleArrowsDrowUpdate = (arrowsData: Square[][]) => {
+      setArrows(arrowsData)
+    }
     const handleAnalyzeClearUpdate = () => {
       setArrows([])
       setHighlightedSquares([])
@@ -143,11 +138,14 @@ export const ChessboardComponent = ({
     SocketService.socket?.on('get_highlight_square', handleHiglightSquareUpdate)
     if (SocketService.socket) GameService.onClearHighlightUpdate(SocketService.socket)
     SocketService.socket?.on('analyze_cleared', handleAnalyzeClearUpdate)
+    if (SocketService.socket) GameService.onDrawArrowUpdate(SocketService.socket)
+    SocketService.socket?.on('arrows_drawn', handleArrowsDrowUpdate)
 
     return () => {
       if (SocketService.socket) {
         SocketService.socket.off('move_made', handleGameUpdate)
         SocketService.socket.off('get_highlight_square', handleHiglightSquareUpdate)
+        SocketService.socket.off('analyze_cleared', handleAnalyzeClearUpdate)
         SocketService.socket.off('analyze_cleared', handleAnalyzeClearUpdate)
       }
     }
