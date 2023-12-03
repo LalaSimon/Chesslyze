@@ -5,9 +5,9 @@ const analyze = socket => {
 
   socket.on('draw_arrows', data => socket.broadcast.to(data.roomID).emit('arrows_drawn', data.arrowsData))
 
-  socket.on('send_highlight_square', data =>
+  socket.on('send_highlight_square', data => {
     socket.broadcast.to(data.roomID).emit('get_highlight_square', data.square)
-  )
+  })
 
   socket.on('change_orientation', data => socket.broadcast.to(data.roomID).emit('orientation_changed'))
 
