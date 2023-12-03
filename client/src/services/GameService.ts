@@ -1,6 +1,7 @@
 import { NavigateFunction } from 'react-router-dom'
 import { Socket } from 'socket.io-client'
 import { MoveObject } from '../shared/types/MoveObject'
+import { Square } from 'react-chessboard/dist/chessboard/types'
 
 class GameService {
   public socket: Socket | null = null
@@ -49,6 +50,17 @@ class GameService {
   public onClearHighlightUpdate(socket: Socket) {
     socket.on('analyze_cleared', () => {
       return true
+    })
+  }
+  public drawArrow(socket: Socket, arrowsData: Square[][], roomID: string) {
+    socket.emit('draw_arrows', {
+      arrowsData,
+      roomID,
+    })
+  }
+  public onDrawArrowUpdate(socket: Socket) {
+    socket.on('arrows_drawn', data => {
+      data
     })
   }
 }

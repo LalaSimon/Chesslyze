@@ -4,7 +4,7 @@ import { Square, Chess } from 'chess.js'
 import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 import { SetStateAction, Dispatch, useState, useEffect } from 'react'
 import { MoveObject } from '../../../../../shared/types/MoveObject'
-import { io } from 'socket.io-client'
+import { Socket, io } from 'socket.io-client'
 import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
 import { setFen } from '../../../../../redux/slices/fen'
 import { setMoveList } from '../../../../../redux/slices/moveList'
@@ -89,22 +89,13 @@ export const ChessboardComponent = ({
   const arrowDrow = (arrowsData: Square[][]) => {
     if (arrowsData.length === 0 && arrowsData !== arrows) {
       setArrows([])
-      socket.emit('draw_arrows', {
-        arrowsData,
-        roomID,
-      })
+      if (SocketService.socket) GameService.drawArrow(socket, arrowsData, roomID)
     } else {
       if (arrowsData.flat().join() === arrows.flat().join()) return
       setArrows(arrowsData)
-      socket.emit('draw_arrows', {
-        arrowsData,
-        roomID,
-      })
+      if (SocketService.socket) GameService.drawArrow(socket, arrowsData, roomID)
     }
   }
-
-  socket.on('arrows_cleared', () => setArrows([]))
-  socket.on('arrows_drawn', arrowsData => setArrows(arrowsData))
 
   const highlightSquare = (square: string) => {
     if (SocketService.socket) GameService.highlightSquare(socket, square, roomID)
@@ -115,6 +106,9 @@ export const ChessboardComponent = ({
   }
 
   useEffect(() => {
+    const handleArrowsDrowUpdate = (arrowsData: Square[][]) => {
+      setArrows(arrowsData)
+    }
     const handleAnalyzeClearUpdate = () => {
       setArrows([])
       setHighlightedSquares([])
@@ -143,6 +137,8 @@ export const ChessboardComponent = ({
     SocketService.socket?.on('get_highlight_square', handleHiglightSquareUpdate)
     if (SocketService.socket) GameService.onClearHighlightUpdate(SocketService.socket)
     SocketService.socket?.on('analyze_cleared', handleAnalyzeClearUpdate)
+    if (SocketService.socket) GameService.onDrawArrowUpdate(SocketService.socket)
+    SocketService.socket?.on('arrows_drawn', handleArrowsDrowUpdate)
 
     return () => {
       if (SocketService.socket) {
