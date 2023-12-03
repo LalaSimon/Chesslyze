@@ -27,7 +27,7 @@ type TMove = {
   promotion: string
 }
 
-interface IMoveData {
+type TMoveData = {
   move: TMove
   moveList: MoveObject[][]
 }
@@ -38,13 +38,13 @@ export const ChessboardComponent = ({
   roomID,
   setGame,
 }: ChessboardComponentProps) => {
-  const dispatch = useTypedDispatch()
   const [highlightedSquares, setHighlightedSquares] = useState<string[]>([])
   const [arrows, setArrows] = useState<Square[][]>([])
   const { moveList } = useTypedSelector(state => state.moveList)
   const socket = io('http://localhost:3000', {
     transports: ['websocket'],
   })
+  const dispatch = useTypedDispatch()
 
   const onDrop = async (sourceSquare: Square, targetSquare: Square) => {
     const move: TMove = {
@@ -52,6 +52,7 @@ export const ChessboardComponent = ({
       to: targetSquare,
       promotion: 'q',
     }
+
     if (game.move(move)) {
       const sanNotationMove = game.history().pop() as string
       const movesCopy = [...moveList.map(move => [...move])]
@@ -73,6 +74,7 @@ export const ChessboardComponent = ({
       dispatch(setMoveList([...movesCopy]))
       const response = await fetch(`https://explorer.lichess.ovh/masters?fen=${game.fen()}`)
       const jsonData = await response.json()
+
       if (!jsonData.moves.white && !jsonData.moves.black && !jsonData.moves.draws) {
         dispatch(setMovesEval(jsonData.moves))
       } else dispatch(setMovesEval(''))
@@ -81,16 +83,6 @@ export const ChessboardComponent = ({
       return true
     } else {
       return false
-    }
-  }
-
-  const highlightSquare = (square: string) => {
-    if (!highlightedSquares.includes(square)) {
-      setHighlightedSquares([...highlightedSquares, square])
-      if (SocketService.socket) GameService.highlightSquare(socket, square, roomID)
-    } else {
-      setHighlightedSquares(highlightedSquares.filter(s => s !== square))
-      if (SocketService.socket) GameService.highlightSquare(socket, square, roomID)
     }
   }
 
@@ -111,29 +103,28 @@ export const ChessboardComponent = ({
     }
   }
 
-  const clearHighlightedSquares = () => {
-    setArrows([])
-    setHighlightedSquares([])
-    socket.emit('clear_analyze', { roomID })
-  }
-
-  socket.on('send_clear_highlight_squares', () => setHighlightedSquares([]))
   socket.on('arrows_cleared', () => setArrows([]))
   socket.on('arrows_drawn', arrowsData => setArrows(arrowsData))
 
-  socket.on('analyze_cleared', () => {
-    setArrows([])
-    setHighlightedSquares([])
-  })
+  const highlightSquare = (square: string) => {
+    if (SocketService.socket) GameService.highlightSquare(socket, square, roomID)
+  }
 
-  const handleHiglightSquareUpdate = (square: string) => {
-    !highlightedSquares.includes(square)
-      ? setHighlightedSquares(prevHighlightedSquares => [...prevHighlightedSquares, square])
-      : setHighlightedSquares(prevHighlightedSquares => prevHighlightedSquares.filter(s => s !== square))
+  const clearHighlightedSquares = () => {
+    if (SocketService.socket) GameService.clearHighlight(socket, roomID)
   }
 
   useEffect(() => {
-    const handleGameUpdate = async (data: IMoveData) => {
+    const handleAnalyzeClearUpdate = () => {
+      setArrows([])
+      setHighlightedSquares([])
+    }
+    const handleHiglightSquareUpdate = (square: string) => {
+      !highlightedSquares.includes(square)
+        ? setHighlightedSquares(prevHighlightedSquares => [...prevHighlightedSquares, square])
+        : setHighlightedSquares(prevHighlightedSquares => prevHighlightedSquares.filter(s => s !== square))
+    }
+    const handleGameUpdate = async (data: TMoveData) => {
       if (game.move(data.move)) {
         setGame(game)
         dispatch(setMoveList(data.moveList))
@@ -150,19 +141,22 @@ export const ChessboardComponent = ({
     SocketService.socket?.on('move_made', handleGameUpdate)
     if (SocketService.socket) GameService.onHighlightSquareUpdate(SocketService.socket)
     SocketService.socket?.on('get_highlight_square', handleHiglightSquareUpdate)
+    if (SocketService.socket) GameService.onClearHighlightUpdate(SocketService.socket)
+    SocketService.socket?.on('analyze_cleared', handleAnalyzeClearUpdate)
 
     return () => {
       if (SocketService.socket) {
         SocketService.socket.off('move_made', handleGameUpdate)
         SocketService.socket.off('get_highlight_square', handleHiglightSquareUpdate)
+        SocketService.socket.off('analyze_cleared', handleAnalyzeClearUpdate)
       }
     }
-  }, [dispatch, game, setGame])
+  }, [dispatch, game, setGame, highlightSquare])
 
   return (
     <div onClick={clearHighlightedSquares}>
       <Chessboard
-        onSquareRightClick={highlightSquare}
+        onSquareRightClick={s => highlightSquare(s)}
         customArrows={arrows}
         onArrowsChange={arrowDrow}
         onPieceDrop={onDrop}

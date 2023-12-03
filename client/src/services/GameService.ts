@@ -41,6 +41,15 @@ class GameService {
       data
     })
   }
-}
 
+  public clearHighlight(socket: Socket, roomID: string) {
+    socket.emit('clear_analyze', { roomID })
+  }
+
+  public onClearHighlightUpdate(socket: Socket) {
+    socket.on('analyze_cleared', () => {
+      return true
+    })
+  }
+}
 export default new GameService()
