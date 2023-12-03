@@ -44,6 +44,7 @@ export const ChessboardComponent = ({
   const socket = io('http://localhost:3000', {
     transports: ['websocket'],
   })
+
   const dispatch = useTypedDispatch()
 
   const onDrop = async (sourceSquare: Square, targetSquare: Square) => {
@@ -144,6 +145,7 @@ export const ChessboardComponent = ({
       if (SocketService.socket) {
         SocketService.socket.off('move_made', handleGameUpdate)
         SocketService.socket.off('get_highlight_square', handleHiglightSquareUpdate)
+        SocketService.socket.off('analyze_cleared', handleAnalyzeClearUpdate)
         SocketService.socket.off('analyze_cleared', handleAnalyzeClearUpdate)
       }
     }
