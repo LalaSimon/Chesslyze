@@ -1,7 +1,7 @@
 import { NavigateFunction } from 'react-router-dom'
 import { Socket } from 'socket.io-client'
 import { MoveObject } from '../shared/types/MoveObject'
-import { Square } from 'react-chessboard/dist/chessboard/types'
+import { BoardOrientation, Square } from 'react-chessboard/dist/chessboard/types'
 
 class GameService {
   public socket: Socket | null = null
@@ -61,6 +61,28 @@ class GameService {
   public onDrawArrowUpdate(socket: Socket) {
     socket.on('arrows_drawn', data => {
       data
+    })
+  }
+  public changeOrientation(socket: Socket, orientation: BoardOrientation, roomID: string) {
+    socket.emit('changeOrientation', {
+      orientation,
+      roomID,
+    })
+  }
+  public onChangeOrientationUpdate(socket: Socket) {
+    socket.on('onChangeOrientationUpdate', orientation => {
+      orientation
+    })
+  }
+  public otherPlayerChangeOrientation(socket: Socket, orientation: BoardOrientation, roomID: string) {
+    socket.emit('otherPlayerChangeOrientation', {
+      orientation,
+      roomID,
+    })
+  }
+  public onOtherPlayerChangeOrientationUpdate(socket: Socket) {
+    socket.on('onOtherPlayerChangeOrientationUpdate', orientation => {
+      orientation
     })
   }
 }

@@ -9,10 +9,12 @@ const analyze = socket => {
     socket.broadcast.to(data.roomID).emit('get_highlight_square', data.square)
   })
 
-  socket.on('change_orientation', data => socket.broadcast.to(data.roomID).emit('orientation_changed'))
+  socket.on('changeOrientation', data =>
+    socket.broadcast.to(data.roomID).emit('onChangeOrientationUpdate', data.orientation)
+  )
 
-  socket.on('other_player_orientation', data =>
-    socket.broadcast.to(data.roomID).emit('get_other_player_orientation', data.orientation)
+  socket.on('otherPlayerChangeOrientation', data =>
+    socket.broadcast.to(data.roomID).emit('onOtherPlayerChangeOrientationUpdate', data.orientation)
   )
 
   socket.on('clear_analyze', data => socket.broadcast.to(data.roomID).emit('analyze_cleared'))
