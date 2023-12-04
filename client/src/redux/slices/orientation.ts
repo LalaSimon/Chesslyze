@@ -1,22 +1,28 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-interface OrientationState {
-  orientation: 'white' | 'black'
+type OrientationState = {
+  myOrientation: 'white' | 'black'
+  opponentOrientation: 'white' | 'black'
 }
 
 export const orientationSlice = createSlice({
   name: 'orientation',
 
   initialState: {
-    orientation: 'white',
+    myOrientation: 'white',
+    opponentOrientation: 'white',
   } as OrientationState,
 
   reducers: {
-    setOrientation: (state, action) => {
-      return { ...state, orientation: action.payload }
+    setMyOrientation: (state, action) => {
+      return { ...state, myOrientation: action.payload }
+    },
+    setOpponentOrientation: (state, action) => {
+      return { ...state, opponentOrientation: action.payload }
     },
   },
 })
 
-export const { setOrientation } = orientationSlice.actions
+export const { setMyOrientation } = orientationSlice.actions
+export const { setOpponentOrientation } = orientationSlice.actions
 export default orientationSlice.reducer

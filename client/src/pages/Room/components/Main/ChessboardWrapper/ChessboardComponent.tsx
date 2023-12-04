@@ -1,10 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Chessboard } from 'react-chessboard'
 import { Square, Chess } from 'chess.js'
-import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 import { SetStateAction, Dispatch, useState, useEffect } from 'react'
 import { MoveObject } from '../../../../../shared/types/MoveObject'
-import { io } from 'socket.io-client'
 import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
 import { setFen } from '../../../../../redux/slices/fen'
 import { setMoveList } from '../../../../../redux/slices/moveList'
@@ -16,7 +14,6 @@ import SocketService from '../../../../../services/SocketService'
 
 type ChessboardComponentProps = {
   game: Chess
-  boardOrientation: BoardOrientation
   roomID: string
   setGame: Dispatch<SetStateAction<Chess>>
 }
@@ -32,19 +29,11 @@ type TMoveData = {
   moveList: MoveObject[][]
 }
 
-export const ChessboardComponent = ({
-  game,
-  boardOrientation,
-  roomID,
-  setGame,
-}: ChessboardComponentProps) => {
+export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardComponentProps) => {
   const [highlightedSquares, setHighlightedSquares] = useState<string[]>([])
   const [arrows, setArrows] = useState<Square[][]>([])
   const { moveList } = useTypedSelector(state => state.moveList)
-  const socket = io('http://localhost:3000', {
-    transports: ['websocket'],
-  })
-
+  const myOrientation = useTypedSelector(state => state.orientation.myOrientation)
   const dispatch = useTypedDispatch()
 
   const onDrop = async (sourceSquare: Square, targetSquare: Square) => {
@@ -90,20 +79,20 @@ export const ChessboardComponent = ({
   const arrowDrow = (arrowsData: Square[][]) => {
     if (arrowsData.length === 0 && arrowsData !== arrows) {
       setArrows([])
-      if (SocketService.socket) GameService.drawArrow(socket, arrowsData, roomID)
+      if (SocketService.socket) GameService.drawArrow(SocketService.socket, arrowsData, roomID)
     } else {
       if (arrowsData.flat().join() === arrows.flat().join()) return
       setArrows(arrowsData)
-      if (SocketService.socket) GameService.drawArrow(socket, arrowsData, roomID)
+      if (SocketService.socket) GameService.drawArrow(SocketService.socket, arrowsData, roomID)
     }
   }
 
   const highlightSquare = (square: string) => {
-    if (SocketService.socket) GameService.highlightSquare(socket, square, roomID)
+    if (SocketService.socket) GameService.highlightSquare(SocketService.socket, square, roomID)
   }
 
   const clearHighlightedSquares = () => {
-    if (SocketService.socket) GameService.clearHighlight(socket, roomID)
+    if (SocketService.socket) GameService.clearHighlight(SocketService.socket, roomID)
   }
 
   useEffect(() => {
@@ -159,7 +148,7 @@ export const ChessboardComponent = ({
         onArrowsChange={arrowDrow}
         onPieceDrop={onDrop}
         position={game.fen()}
-        boardOrientation={boardOrientation}
+        boardOrientation={myOrientation}
         boardWidth={570}
         customSquareStyles={{
           ...highlightedSquares.reduce(
