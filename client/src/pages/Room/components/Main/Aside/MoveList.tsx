@@ -21,7 +21,7 @@ export const MoveList = ({ game, setGame, roomID }: MoveListProps) => {
   const [renderSmallBoard, setRenderSmallBoard] = useState<boolean>(false)
   const { fen } = useTypedSelector(state => state.fen)
   const { moveList } = useTypedSelector(state => state.moveList)
-  const { orientation } = useTypedSelector(state => state.orientation)
+  const { myOrientation } = useTypedSelector(state => state.orientation)
 
   const socket = io('http://localhost:3000', {
     transports: ['websocket'],
@@ -109,7 +109,11 @@ export const MoveList = ({ game, setGame, roomID }: MoveListProps) => {
         ))}
         {renderSmallBoard && (
           <div className="pointer-events-none absolute left-[105%] top-[25%]">
-            <Chessboard boardOrientation={orientation as BoardOrientation} boardWidth={170} position={fen} />
+            <Chessboard
+              boardOrientation={myOrientation as BoardOrientation}
+              boardWidth={170}
+              position={fen}
+            />
           </div>
         )}
       </div>
