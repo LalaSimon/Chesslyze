@@ -1,7 +1,7 @@
 import { NavigateFunction } from 'react-router-dom'
 import { Socket } from 'socket.io-client'
 import { MoveObject } from '../shared/types/MoveObject'
-import { BoardOrientation, Square } from 'react-chessboard/dist/chessboard/types'
+import { Arrow, BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 
 class GameService {
   public socket: Socket | null = null
@@ -52,7 +52,7 @@ class GameService {
       return true
     })
   }
-  public drawArrow(socket: Socket, arrowsData: Square[][], roomID: string) {
+  public drawArrow(socket: Socket, arrowsData: Arrow[], roomID: string) {
     socket.emit('draw_arrows', {
       arrowsData,
       roomID,
