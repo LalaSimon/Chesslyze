@@ -51,6 +51,7 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
         move: sanNotationMove,
         fen: game.fen(),
       }
+
       if (movesCopy.length === 0) {
         movesCopy.push([moveObject])
       } else if (movesCopy[movesCopy.length - 1].length != 1) {
@@ -66,6 +67,7 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
       const response = await fetch(`https://explorer.lichess.ovh/masters?fen=${game.fen()}`).then(res =>
         res.json()
       )
+
       if (!response.moves.white && !response.moves.black && !response.moves.draws) {
         dispatch(setMovesEval(response.moves))
       } else dispatch(setMovesEval(''))
@@ -84,6 +86,7 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
     } else {
       if (arrowsData.flat().join() === arrows.flat().join()) return
       setArrows(arrowsData)
+
       if (SocketService.socket) GameService.drawArrow(SocketService.socket, arrowsData, roomID)
     }
   }
@@ -103,15 +106,18 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
     const handleArrowsDrowUpdate = (arrowsData: Arrow[]) => {
       setArrows(arrowsData)
     }
+
     const handleAnalyzeClearUpdate = () => {
       setArrows([])
       setHighlightedSquares([])
     }
+
     const handleHiglightSquareUpdate = (square: string) => {
       !highlightedSquares.includes(square)
         ? setHighlightedSquares(prevHighlightedSquares => [...prevHighlightedSquares, square])
         : setHighlightedSquares(prevHighlightedSquares => prevHighlightedSquares.filter(s => s !== square))
     }
+
     const handleGameUpdate = async (data: TMoveData) => {
       if (game.move(data.move)) {
         setGame(game)

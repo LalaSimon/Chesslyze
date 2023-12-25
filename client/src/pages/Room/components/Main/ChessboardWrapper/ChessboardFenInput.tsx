@@ -13,6 +13,7 @@ export const ChessboardFenInput = ({ setGame }: ChessboardFenInputProps) => {
   const [inputValue, setInputValue] = useState<string>('')
   const { fen } = useTypedSelector(state => state.fen)
   const dispatch = useTypedDispatch()
+
   const onSubmit = async (event: FormEvent) => {
     setInputValue('')
     event.preventDefault()
