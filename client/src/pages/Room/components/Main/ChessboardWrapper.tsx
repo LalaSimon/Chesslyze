@@ -5,7 +5,7 @@ import { Dispatch, SetStateAction } from 'react'
 import { ChessboardFenInput } from './ChessboardWrapper/ChessboardFenInput'
 
 type ChessboardWrapperProps = {
-  roomID?: string
+  roomID: string
   game: Chess
   setGame: Dispatch<SetStateAction<Chess>>
 }
@@ -16,7 +16,7 @@ export const ChessboardWrapper = ({ roomID, game, setGame }: ChessboardWrapperPr
       <h1>You are in room nr {roomID}</h1>
       <ChessboardComponent setGame={setGame} game={game} roomID={roomID!} />
       <ChessboardButtons setGame={setGame} roomID={roomID} />
-      <ChessboardFenInput setGame={setGame} />
+      <ChessboardFenInput roomID={roomID} setGame={setGame} />
     </section>
   )
 }
