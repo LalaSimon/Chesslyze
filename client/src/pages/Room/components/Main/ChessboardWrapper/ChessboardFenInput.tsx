@@ -1,65 +1,57 @@
-import { setFen } from '../../../../../redux/slices/fen'
-import { fetchMovesEval } from '../../../../../shared/utils/LichesAPI'
-import { fetchOpening } from '../../../../../shared/utils/LichesAPI'
 import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
-import { useState, FormEvent, Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+
 import { Chess } from 'chess.js'
+import { Button } from '../../../../../shared/components/Button'
+import { setFen } from '../../../../../redux/slices/fen'
+import SocketService from '../../../../../services/SocketService'
+import GameService from '../../../../../services/GameService'
 
 type ChessboardFenInputProps = {
   setGame: Dispatch<SetStateAction<Chess>>
+  roomID: string
 }
 
-export const ChessboardFenInput = ({ setGame }: ChessboardFenInputProps) => {
-  const [inputValue, setInputValue] = useState<string>('')
+export const ChessboardFenInput = ({ setGame, roomID }: ChessboardFenInputProps) => {
+  const [inputValue, setInputValue] = useState('')
   const { fen } = useTypedSelector(state => state.fen)
   const dispatch = useTypedDispatch()
 
-  const onSubmit = async (event: FormEvent) => {
-    setInputValue('')
-    event.preventDefault()
-    if (!inputValue) {
-      return false
-    } else {
-      dispatch(setFen(inputValue))
+  const handleFenChange = () => {
+    if (SocketService.socket) {
+      GameService.fenChange(SocketService.socket, inputValue, roomID)
       setGame(new Chess(inputValue))
-      await fetchMovesEval(inputValue, dispatch)
-      await fetchOpening(inputValue, dispatch)
+      dispatch(setFen(inputValue))
+      setInputValue('')
     }
   }
 
-  const copyFen = async () => {
-    try {
-      await navigator.clipboard.writeText(fen)
-      alert('skopiowano FEN')
-    } catch (err) {
-      console.error(err)
+  useEffect(() => {
+    const fenChangeHandler = (fen: string) => {
+      setGame(new Chess(fen))
+      dispatch(setFen(fen))
+      setInputValue('')
     }
-  }
+
+    if (SocketService.socket) GameService.onFenChangeUpdate(SocketService.socket)
+    SocketService.socket?.on('onFenChangeUpdate', fenChangeHandler)
+
+    return () => {
+      if (SocketService.socket) {
+        SocketService.socket.off('onFenChangeUpdate', fenChangeHandler)
+      }
+    }
+  }, [fen])
 
   return (
-    <form className="flex flex-col items-center justify-center gap-2" onSubmit={onSubmit}>
-      <div className="flex gap-2">
-        <input
-          onChange={e => setInputValue(e.target.value)}
-          value={!inputValue ? fen : inputValue}
-          type="text"
-          placeholder="Paste fen"
-          className="w-[580px] rounded-xl text-center"
-        />
-        <button
-          className={`${
-            inputValue ? 'blob' : null
-          } max-w-[150px] rounded-xl border border-gray-400 p-2 text-center transition duration-150 ease-in-out hover:scale-110 hover:cursor-pointer hover:bg-gray-100 active:shadow-inner active:shadow-gray-500`}
-          type="submit">
-          Load Fen
-        </button>
-      </div>
-      <button
-        onClick={copyFen}
-        className="max-w-[150px] rounded-xl border border-gray-400 p-2 text-center transition duration-150 ease-in-out hover:scale-110 hover:cursor-pointer hover:bg-gray-100 active:shadow-inner active:shadow-gray-500"
-        type="button">
-        Copy fen
-      </button>
-    </form>
+    <div className="flex w-full flex-col gap-1 text-center">
+      <label>Paste fen to change position. ctrl + a {'->'} ctrl + v</label>
+      <input
+        onChange={e => setInputValue(e.target.value)}
+        className="rounded-lg p-2 text-center text-sm"
+        value={inputValue || fen}
+      />
+      <Button disabled={!inputValue} callback={handleFenChange} btnText="change fen" />
+    </div>
   )
 }

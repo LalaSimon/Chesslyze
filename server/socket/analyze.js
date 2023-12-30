@@ -20,5 +20,10 @@ const analyze = socket => {
   socket.on('clear_analyze', data => socket.broadcast.to(data.roomID).emit('analyze_cleared'))
 
   socket.on('clear_board', data => socket.broadcast.to(data.roomID).emit('board_cleared'))
+
+  socket.on('fenChange', data => {
+    console.log('got hit with', data)
+    socket.broadcast.to(data.roomID).emit('onFenChangeUpdate', data.fen)
+  })
 }
 module = module.exports = analyze

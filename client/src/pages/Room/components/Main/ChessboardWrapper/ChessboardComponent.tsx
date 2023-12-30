@@ -99,7 +99,11 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
   }
 
   const clearHighlightedSquares = () => {
-    if (SocketService.socket) GameService.clearHighlight(SocketService.socket, roomID)
+    if (SocketService.socket) {
+      GameService.clearAnalyze(SocketService.socket, roomID)
+      setArrows([])
+      setHighlightedSquares([])
+    }
   }
 
   useEffect(() => {
@@ -135,7 +139,7 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
     SocketService.socket?.on('move_made', handleGameUpdate)
     if (SocketService.socket) GameService.onHighlightSquareUpdate(SocketService.socket)
     SocketService.socket?.on('get_highlight_square', handleHiglightSquareUpdate)
-    if (SocketService.socket) GameService.onClearHighlightUpdate(SocketService.socket)
+    if (SocketService.socket) GameService.onClearAnalyze(SocketService.socket)
     SocketService.socket?.on('analyze_cleared', handleAnalyzeClearUpdate)
     if (SocketService.socket) GameService.onDrawArrowUpdate(SocketService.socket)
     SocketService.socket?.on('arrows_drawn', handleArrowsDrowUpdate)
@@ -145,7 +149,7 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
         SocketService.socket.off('move_made', handleGameUpdate)
         SocketService.socket.off('get_highlight_square', handleHiglightSquareUpdate)
         SocketService.socket.off('analyze_cleared', handleAnalyzeClearUpdate)
-        SocketService.socket.off('analyze_cleared', handleAnalyzeClearUpdate)
+        SocketService.socket.off('arrows_drawn', handleArrowsDrowUpdate)
       }
     }
   }, [dispatch, game, setGame, highlightSquare])

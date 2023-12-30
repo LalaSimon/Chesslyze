@@ -25,9 +25,7 @@ class GameService {
   }
 
   public onGameUpdate(socket: Socket) {
-    socket.on('move_made', data => {
-      data
-    })
+    socket.on('move_made', data => data)
   }
 
   public async highlightSquare(socket: Socket, square: string, roomID: string) {
@@ -38,20 +36,17 @@ class GameService {
   }
 
   public onHighlightSquareUpdate(socket: Socket) {
-    socket.on('get_highlight_square', data => {
-      data
-    })
+    socket.on('get_highlight_square', data => data)
   }
 
-  public clearHighlight(socket: Socket, roomID: string) {
+  public clearAnalyze(socket: Socket, roomID: string) {
     socket.emit('clear_analyze', { roomID })
   }
 
-  public onClearHighlightUpdate(socket: Socket) {
-    socket.on('analyze_cleared', () => {
-      return true
-    })
+  public onClearAnalyze(socket: Socket) {
+    socket.on('analyze_cleared', () => true)
   }
+
   public drawArrow(socket: Socket, arrowsData: Arrow[], roomID: string) {
     socket.emit('draw_arrows', {
       arrowsData,
@@ -59,10 +54,9 @@ class GameService {
     })
   }
   public onDrawArrowUpdate(socket: Socket) {
-    socket.on('arrows_drawn', data => {
-      data
-    })
+    socket.on('arrows_drawn', data => data)
   }
+
   public changeOrientation(socket: Socket, orientation: BoardOrientation, roomID: string) {
     socket.emit('changeOrientation', {
       orientation,
@@ -70,10 +64,9 @@ class GameService {
     })
   }
   public onChangeOrientationUpdate(socket: Socket) {
-    socket.on('onChangeOrientationUpdate', orientation => {
-      orientation
-    })
+    socket.on('onChangeOrientationUpdate', orientation => orientation)
   }
+
   public otherPlayerChangeOrientation(socket: Socket, orientation: BoardOrientation, roomID: string) {
     socket.emit('otherPlayerChangeOrientation', {
       orientation,
@@ -81,9 +74,17 @@ class GameService {
     })
   }
   public onOtherPlayerChangeOrientationUpdate(socket: Socket) {
-    socket.on('onOtherPlayerChangeOrientationUpdate', orientation => {
-      orientation
+    socket.on('onOtherPlayerChangeOrientationUpdate', orientation => orientation)
+  }
+
+  public fenChange(socket: Socket, fen: string, roomID: string) {
+    socket.emit('fenChange', {
+      roomID,
+      fen,
     })
+  }
+  public onFenChangeUpdate(socket: Socket) {
+    socket.on('onFenChangeUpdate', fen => fen)
   }
 }
 export default new GameService()
