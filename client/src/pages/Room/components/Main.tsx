@@ -17,7 +17,7 @@ export const Main = ({ roomID }: MainProps) => {
 
       <ChessboardWrapper roomID={roomID} game={game} setGame={setGame} />
 
-      <Aside game={game} setGame={setGame} roomID={roomID} />
+      <Aside setGame={setGame} roomID={roomID} />
     </main>
   )
 }

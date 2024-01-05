@@ -1,6 +1,5 @@
 import { NavigateFunction } from 'react-router-dom'
 import { Socket } from 'socket.io-client'
-import { MoveObject } from '../shared/types/MoveObject'
 import { Arrow, BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 
 class GameService {
@@ -16,10 +15,9 @@ class GameService {
     })
   }
 
-  public async gameUpdate(socket: Socket, movesCopy: MoveObject[][], move: object, roomID: string) {
+  public async gameUpdate(socket: Socket, moveObject: object, roomID: string) {
     socket.emit('make_a_move', {
-      moveList: movesCopy,
-      move,
+      moveObject,
       roomID,
     })
   }

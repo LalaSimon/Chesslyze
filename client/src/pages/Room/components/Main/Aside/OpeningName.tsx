@@ -1,11 +1,11 @@
 import { useTypedSelector } from '../../../../../redux/store'
 
 export const OpeningName = () => {
-  const { opening } = useTypedSelector(state => state.opening)
+  const { openingName } = useTypedSelector(state => state.openingName)
 
   return (
     <section className="flex flex-col text-center">
-      <span>Opening:</span> <span>{!opening ? '-' : opening}</span>
+      <span>Opening:</span> <span>{!openingName ? '-' : openingName}</span>
     </section>
   )
 }

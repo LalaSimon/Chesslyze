@@ -1,13 +1,13 @@
-import type { MovesEval } from '../../../../../../shared/types/MovesEval'
+import type { openingFenEvalType } from '../../../../../../shared/types/openingFenEval'
 
 type TableBodyProps = {
-  movesEval: MovesEval[]
+  openingList: openingFenEvalType[]
 }
 
-export const TableBody = ({ movesEval }: TableBodyProps) => {
+export const TableBody = ({ openingList }: TableBodyProps) => {
   return (
     <tbody>
-      {movesEval.map((dataObj, index) => (
+      {openingList.map((dataObj, index) => (
         <tr key={index} className="border">
           <td>{index + 1}.</td>
           <td>{dataObj.san}</td>

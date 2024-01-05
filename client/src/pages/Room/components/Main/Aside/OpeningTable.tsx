@@ -6,7 +6,7 @@ import { TableBody } from './OpeningTable/TableBody'
 
 export const OpeningTable = () => {
   const { fen } = useTypedSelector(state => state.fen)
-  const { movesEval } = useTypedSelector(state => state.movesEval)
+  const { openingList } = useTypedSelector(state => state.openingList)
   const dispatch = useTypedDispatch()
 
   useEffect(() => {
@@ -14,14 +14,14 @@ export const OpeningTable = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  return !movesEval ? (
+  return !openingList ? (
     <span>loading - please wait...</span>
-  ) : movesEval.length === 0 ? (
+  ) : openingList.length === 0 ? (
     <span>No records found</span>
   ) : (
     <table className="w-full border-collapse overflow-hidden border text-center hover:overflow-auto">
       <TableHeader />
-      <TableBody movesEval={movesEval} />
+      <TableBody openingList={openingList} />
     </table>
   )
 }
