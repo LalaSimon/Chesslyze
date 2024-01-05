@@ -6,8 +6,6 @@ import { MoveObject } from '../../../../../shared/types/MoveObject'
 import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
 import { setFen } from '../../../../../redux/slices/fen'
 import { setMoveList } from '../../../../../redux/slices/moveList'
-import { setOpening } from '../../../../../redux/slices/opening'
-import { setMovesEval } from '../../../../../redux/slices/movesEval'
 import { fetchMovesEval, fetchOpening } from '../../../../../shared/utils/LichesAPI'
 import GameService from '../../../../../services/GameService'
 import SocketService from '../../../../../services/SocketService'
@@ -25,57 +23,36 @@ type TMove = {
   promotion: string
 }
 
-type TMoveData = {
-  move: TMove
-  moveList: MoveObject[][]
-}
-
 export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardComponentProps) => {
   const [highlightedSquares, setHighlightedSquares] = useState<string[]>([])
   const [arrows, setArrows] = useState<Arrow[]>([])
-  const { moveList } = useTypedSelector(state => state.moveList)
   const myOrientation = useTypedSelector(state => state.orientation.myOrientation)
   const dispatch = useTypedDispatch()
 
-  const onDrop = async (sourceSquare: Square, targetSquare: Square): Promise<boolean> => {
+  const onDrop = async (sourceSquare: Square, targetSquare: Square) => {
     const move: TMove = {
       from: sourceSquare,
       to: targetSquare,
       promotion: 'q',
     }
 
+    // if checking bellow is checking if move is legall and if its true he run function with move
+
     if (game.move(move)) {
+      setGame(new Chess(game.fen()))
       const sanNotationMove = game.history().pop() as string
-      const movesCopy = [...moveList.map(move => [...move])]
       const moveObject: MoveObject = {
         move: sanNotationMove,
         fen: game.fen(),
+        moveNumber: game.moveNumber(),
       }
 
-      if (movesCopy.length === 0) {
-        movesCopy.push([moveObject])
-      } else if (movesCopy[movesCopy.length - 1].length != 1) {
-        movesCopy.push([moveObject])
-      } else {
-        movesCopy[movesCopy.length - 1].push(moveObject)
-      }
-      if (SocketService.socket) GameService.gameUpdate(SocketService.socket!, moveList, move, roomID)
+      if (SocketService.socket) GameService.gameUpdate(SocketService.socket!, moveObject, roomID)
 
       dispatch(setFen(game.fen()))
-      dispatch(setMoveList([...movesCopy]))
-
-      const response = await fetch(`https://explorer.lichess.ovh/masters?fen=${game.fen()}`).then(res =>
-        res.json()
-      )
-
-      if (!response.moves.white && !response.moves.black && !response.moves.draws) {
-        dispatch(setMovesEval(response.moves))
-      } else dispatch(setMovesEval(''))
-      dispatch(setOpening(response.opening.name))
-
-      return true
-    } else {
-      return false
+      dispatch(setMoveList(moveObject))
+      fetchMovesEval(game.fen(), dispatch)
+      fetchOpening(game.fen(), dispatch)
     }
   }
 
@@ -86,16 +63,17 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
     } else {
       if (arrowsData.flat().join() === arrows.flat().join()) return
       setArrows(arrowsData)
-
       if (SocketService.socket) GameService.drawArrow(SocketService.socket, arrowsData, roomID)
     }
   }
 
   const highlightSquare = (square: string) => {
-    if (SocketService.socket) GameService.highlightSquare(SocketService.socket, square, roomID)
-    !highlightedSquares.includes(square)
-      ? setHighlightedSquares(prevHighlightedSquares => [...prevHighlightedSquares, square])
-      : setHighlightedSquares(prevHighlightedSquares => prevHighlightedSquares.filter(s => s !== square))
+    if (SocketService.socket) {
+      GameService.highlightSquare(SocketService.socket, square, roomID)
+      !highlightedSquares.includes(square)
+        ? setHighlightedSquares(prevHighlightedSquares => [...prevHighlightedSquares, square])
+        : setHighlightedSquares(prevHighlightedSquares => prevHighlightedSquares.filter(s => s !== square))
+    }
   }
 
   const clearHighlightedSquares = () => {
@@ -122,16 +100,13 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
         : setHighlightedSquares(prevHighlightedSquares => prevHighlightedSquares.filter(s => s !== square))
     }
 
-    const handleGameUpdate = async (data: TMoveData) => {
+    const handleGameUpdate = async (data: MoveObject) => {
       if (game.move(data.move)) {
-        setGame(game)
-        dispatch(setMoveList(data.moveList))
-        dispatch(setFen(game.fen()))
+        setGame(new Chess(game.fen()))
         await fetchOpening(game.fen(), dispatch)
         await fetchMovesEval(game.fen(), dispatch)
-        return true
-      } else {
-        return false
+        dispatch(setMoveList(data))
+        dispatch(setFen(game.fen()))
       }
     }
 

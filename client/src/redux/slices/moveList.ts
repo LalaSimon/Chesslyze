@@ -1,8 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { MoveObject } from '../../shared/types/MoveObject'
 
-interface MoveListState {
-  moveList: [MoveObject][]
+type MoveListState<T> = {
+  moveList: T[]
+  whiteMoves: T[]
+  blackMoves: T[]
 }
 
 const moveListSlice = createSlice({
@@ -10,14 +12,24 @@ const moveListSlice = createSlice({
 
   initialState: {
     moveList: [],
-  } as MoveListState,
+    whiteMoves: [],
+    blackMoves: [],
+  } as MoveListState<MoveObject>,
 
   reducers: {
-    setMoveList: (state, action) => {
-      return { ...state, moveList: action.payload }
+    setMoveList: (state, action: PayloadAction<MoveObject>) => {
+      const { moveList, whiteMoves, blackMoves } = state
+      const { moveNumber } = action.payload
+      const updatedMoveList = [...moveList, action.payload]
+
+      if (moveNumber % 2 === 1) {
+        return { moveList: updatedMoveList, whiteMoves: [...whiteMoves, action.payload], blackMoves }
+      } else {
+        return { moveList: updatedMoveList, whiteMoves, blackMoves: [...blackMoves, action.payload] }
+      }
     },
-    clearMoveList: state => {
-      return { ...state, moveList: [] }
+    clearMoveList: () => {
+      return { moveList: [], whiteMoves: [], blackMoves: [] }
     },
   },
 })

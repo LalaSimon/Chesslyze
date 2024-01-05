@@ -5,7 +5,7 @@ import { io } from 'socket.io-client'
 import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
 import { clearFen } from '../../../../../redux/slices/fen'
 import { clearMoveList } from '../../../../../redux/slices/moveList'
-import { setOpening } from '../../../../../redux/slices/opening'
+import { setOpeningName } from '../../../../../redux/slices/openingName'
 import { fetchMovesEval } from '../../../../../shared/utils/LichesAPI'
 
 type ChessboardButtonsProps = {
@@ -25,7 +25,7 @@ export const ChessboardButtons = ({ setGame, roomID }: ChessboardButtonsProps) =
   const clearBoard = async () => {
     dispatch(clearFen())
     dispatch(clearMoveList())
-    dispatch(setOpening(''))
+    dispatch(setOpeningName(''))
     await fetchMovesEval('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', dispatch)
     setGame(new Chess())
     socket.emit('clear_board', { roomID })
@@ -47,7 +47,7 @@ export const ChessboardButtons = ({ setGame, roomID }: ChessboardButtonsProps) =
       dispatch(clearMoveList())
       dispatch(clearFen())
       setGame(new Chess())
-      dispatch(setOpening(''))
+      dispatch(setOpeningName(''))
     } catch (error) {
       console.log('Wystąpił błąd:', error)
     }
