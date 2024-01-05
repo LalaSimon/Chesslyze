@@ -17,7 +17,7 @@ type ChessboardComponentProps = {
   setGame: Dispatch<SetStateAction<Chess>>
 }
 
-type TMove = {
+type MoveType = {
   from: string
   to: string
   promotion: string
@@ -30,7 +30,7 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
   const dispatch = useTypedDispatch()
 
   const onDrop = async (sourceSquare: Square, targetSquare: Square) => {
-    const move: TMove = {
+    const move: MoveType = {
       from: sourceSquare,
       to: targetSquare,
       promotion: 'q',
@@ -38,17 +38,15 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
 
     // if checking bellow is checking if move is legall and if its true he run function with move
 
-    if (game.move(move)) {
-      setGame(new Chess(game.fen()))
+    if (game.move(move) && SocketService.socket) {
       const sanNotationMove = game.history().pop() as string
       const moveObject: MoveObject = {
         move: sanNotationMove,
         fen: game.fen(),
         moveNumber: game.moveNumber(),
       }
-
-      if (SocketService.socket) GameService.gameUpdate(SocketService.socket!, moveObject, roomID)
-
+      setGame(new Chess(game.fen()))
+      GameService.gameUpdate(SocketService.socket!, moveObject, roomID)
       dispatch(setFen(game.fen()))
       dispatch(setMoveList(moveObject))
       fetchMovesEval(game.fen(), dispatch)
@@ -103,10 +101,10 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
     const handleGameUpdate = async (data: MoveObject) => {
       if (game.move(data.move)) {
         setGame(new Chess(game.fen()))
-        await fetchOpening(game.fen(), dispatch)
-        await fetchMovesEval(game.fen(), dispatch)
         dispatch(setMoveList(data))
         dispatch(setFen(game.fen()))
+        await fetchMovesEval(game.fen(), dispatch)
+        await fetchOpening(game.fen(), dispatch)
       }
     }
 

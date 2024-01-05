@@ -13,7 +13,7 @@ export const MoveList = ({ setGame, roomID }: MoveListProps) => {
   const dispatch = useTypedDispatch()
   const [renderSmallBoard, setRenderSmallBoard] = useState<boolean>(false)
   const [smallBoardFen, setSmallBoardFen] = useState<string>('')
-  const { openingList } = useTypedSelector(state => state.openingList)
+  const { openingList } = useTypedSelector(state => state.openingInfo)
   const { myOrientation } = useTypedSelector(state => state.orientation)
 
   // const handleSetGame = async (fen: string) => {

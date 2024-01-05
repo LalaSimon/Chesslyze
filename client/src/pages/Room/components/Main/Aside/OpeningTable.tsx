@@ -6,12 +6,11 @@ import { TableBody } from './OpeningTable/TableBody'
 
 export const OpeningTable = () => {
   const { fen } = useTypedSelector(state => state.fen)
-  const { openingList } = useTypedSelector(state => state.openingList)
+  const { openingList } = useTypedSelector(state => state.openingInfo)
   const dispatch = useTypedDispatch()
 
   useEffect(() => {
     fetchMovesEval(fen, dispatch)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return !openingList ? (

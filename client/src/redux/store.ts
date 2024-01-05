@@ -3,16 +3,14 @@ import { type TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux
 import fenReducer from './slices/fen'
 import orientationReducer from './slices/orientation'
 import moveListReducer from './slices/moveList'
-import openingNameReducer from './slices/openingName'
-import openingListReducer from './slices/openingList'
+import openingInfoReducer from './slices/openingInfo'
 
 const store = configureStore({
   reducer: {
     fen: fenReducer,
     orientation: orientationReducer,
     moveList: moveListReducer,
-    openingName: openingNameReducer,
-    openingList: openingListReducer,
+    openingInfo: openingInfoReducer,
   },
 })
 
