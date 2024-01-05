@@ -5,9 +5,9 @@ const analyze = socket => {
 
   socket.on('draw_arrows', data => socket.broadcast.to(data.roomID).emit('arrows_drawn', data.arrowsData))
 
-  socket.on('send_highlight_square', data => {
+  socket.on('send_highlight_square', data =>
     socket.broadcast.to(data.roomID).emit('get_highlight_square', data.square)
-  })
+  )
 
   socket.on('changeOrientation', data =>
     socket.broadcast.to(data.roomID).emit('onChangeOrientationUpdate', data.orientation)
@@ -19,11 +19,8 @@ const analyze = socket => {
 
   socket.on('clear_analyze', data => socket.broadcast.to(data.roomID).emit('analyze_cleared'))
 
-  socket.on('clear_board', data => socket.broadcast.to(data.roomID).emit('board_cleared'))
+  socket.on('cleanBoard', data => socket.broadcast.to(data.roomID).emit('onCleanBoardUpdate'))
 
-  socket.on('fenChange', data => {
-    console.log('got hit with', data)
-    socket.broadcast.to(data.roomID).emit('onFenChangeUpdate', data.fen)
-  })
+  socket.on('fenChange', data => socket.broadcast.to(data.roomID).emit('onFenChangeUpdate', data.fen))
 }
 module = module.exports = analyze
