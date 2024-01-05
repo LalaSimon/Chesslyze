@@ -84,5 +84,13 @@ class GameService {
   public onFenChangeUpdate(socket: Socket) {
     socket.on('onFenChangeUpdate', fen => fen)
   }
+
+  public cleanBoard(socket: Socket, roomID: string) {
+    socket.emit('cleanBoard', { roomID })
+  }
+
+  public onCleanBoardUpdate(socket: Socket) {
+    socket.on('onCleanBoardUpdate', () => true)
+  }
 }
 export default new GameService()

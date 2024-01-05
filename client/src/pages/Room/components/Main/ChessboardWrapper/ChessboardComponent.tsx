@@ -45,8 +45,8 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
         fen: game.fen(),
         moveNumber: game.moveNumber(),
       }
+      GameService.gameUpdate(SocketService.socket, moveObject, roomID)
       setGame(new Chess(game.fen()))
-      GameService.gameUpdate(SocketService.socket!, moveObject, roomID)
       dispatch(setFen(game.fen()))
       dispatch(setMoveList(moveObject))
       fetchMovesEval(game.fen(), dispatch)
