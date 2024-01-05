@@ -1,6 +1,5 @@
 import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-
 import { Chess } from 'chess.js'
 import { Button } from '../../../../../shared/components/Button'
 import { setFen } from '../../../../../redux/slices/fen'
