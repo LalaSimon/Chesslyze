@@ -103,10 +103,11 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
     const handleGameUpdate = async (data: MoveObject) => {
       if (game.move(data.move)) {
         setGame(new Chess(game.fen()))
-        dispatch(setMoveList(data))
+        dispatch(addToMoveCounter())
         dispatch(setFen(game.fen()))
-        await fetchMovesEval(game.fen(), dispatch)
-        await fetchOpening(game.fen(), dispatch)
+        dispatch(setMoveList(data))
+        fetchMovesEval(game.fen(), dispatch)
+        fetchOpening(game.fen(), dispatch)
       }
     }
 
