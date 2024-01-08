@@ -1,19 +1,11 @@
 import { Chessboard } from 'react-chessboard'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
-import { Chess } from 'chess.js'
-import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
+import { useTypedSelector } from '../../../../../redux/store'
 
-type MoveListProps = {
-  setGame: Dispatch<SetStateAction<Chess>>
-  roomID: string | undefined
-}
-
-export const MoveList = ({ setGame, roomID }: MoveListProps) => {
-  const dispatch = useTypedDispatch()
+export const MoveList = () => {
   const [renderSmallBoard, setRenderSmallBoard] = useState<boolean>(false)
   const [smallBoardFen, setSmallBoardFen] = useState<string>('')
-  const { openingList } = useTypedSelector(state => state.openingInfo)
   const { myOrientation } = useTypedSelector(state => state.orientation)
   const { moveList, moveCounter } = useTypedSelector(state => state.moveList)
 
@@ -21,12 +13,20 @@ export const MoveList = ({ setGame, roomID }: MoveListProps) => {
     <section className="relative mb-auto flex min-w-[285px] flex-col gap-2">
       <h2 className="text-center">Move list</h2>
       <div className="flex w-full flex-wrap">
-        {moveList.map(move => {
+        {moveList.map((move, index) => {
           return (
             <span
-              className={`w-1/2 border p-2 text-center ${
+              key={index}
+              onMouseEnter={() => {
+                setSmallBoardFen(move.fen)
+                setRenderSmallBoard(true)
+              }}
+              onMouseLeave={() => {
+                setRenderSmallBoard(false)
+              }}
+              className={`w-1/2 p-2 text-center ${
                 move.moveNumber % 2 === 0 ? 'bg-black text-white' : 'bg-white text-black'
-              }`}>
+              } ${move.moveNumber === moveCounter - 1 ? 'border border-red-600' : null}`}>
               {move.move}
             </span>
           )
