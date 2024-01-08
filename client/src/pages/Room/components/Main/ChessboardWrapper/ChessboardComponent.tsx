@@ -5,7 +5,7 @@ import { SetStateAction, Dispatch, useState, useEffect } from 'react'
 import { MoveObject } from '../../../../../shared/types/MoveObject'
 import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
 import { setFen } from '../../../../../redux/slices/fen'
-import { setMoveList } from '../../../../../redux/slices/moveList'
+import { addToMoveCounter, setMoveList } from '../../../../../redux/slices/moveList'
 import { fetchMovesEval, fetchOpening } from '../../../../../shared/utils/LichesAPI'
 import GameService from '../../../../../services/GameService'
 import SocketService from '../../../../../services/SocketService'
@@ -26,7 +26,8 @@ type MoveType = {
 export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardComponentProps) => {
   const [highlightedSquares, setHighlightedSquares] = useState<string[]>([])
   const [arrows, setArrows] = useState<Arrow[]>([])
-  const myOrientation = useTypedSelector(state => state.orientation.myOrientation)
+  const { myOrientation } = useTypedSelector(state => state.orientation)
+  const { moveCounter } = useTypedSelector(state => state.moveList)
   const dispatch = useTypedDispatch()
 
   const onDrop = async (sourceSquare: Square, targetSquare: Square) => {
@@ -43,10 +44,11 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
       const moveObject: MoveObject = {
         move: sanNotationMove,
         fen: game.fen(),
-        moveNumber: game.moveNumber(),
+        moveNumber: moveCounter,
       }
       GameService.gameUpdate(SocketService.socket, moveObject, roomID)
       setGame(new Chess(game.fen()))
+      dispatch(addToMoveCounter())
       dispatch(setFen(game.fen()))
       dispatch(setMoveList(moveObject))
       fetchMovesEval(game.fen(), dispatch)
