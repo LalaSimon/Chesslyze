@@ -53,7 +53,7 @@ export const Orientation = ({ roomID }: OrientationProps) => {
   }, [dispatch, roomID, myOrientation])
 
   return (
-    <section className="mr-2 flex flex-col gap-3">
+    <section className="mr-2 flex w-1/4 gap-3 lg:flex-col">
       <Button callback={handleOrietnation} btnText={myOrientation} description={'your orientation'} />
 
       <Button

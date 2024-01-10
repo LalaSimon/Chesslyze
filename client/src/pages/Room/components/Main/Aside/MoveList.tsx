@@ -10,9 +10,17 @@ export const MoveList = () => {
   const { moveList, moveCounter } = useTypedSelector(state => state.moveList)
 
   return (
-    <section className="relative mb-auto flex min-w-[285px] flex-col gap-2">
-      <h2 className="text-center">Move list</h2>
-      <div className="flex w-full flex-wrap">
+    <section className="flex h-[400px] w-[200px] flex-col items-center gap-2 overflow-y-auto overflow-x-hidden lg:justify-center">
+      <div className={`pointer-events-none ${renderSmallBoard ? 'opacity-100' : 'opacity-0'}`}>
+        <Chessboard
+          boardOrientation={myOrientation as BoardOrientation}
+          boardWidth={170}
+          position={smallBoardFen}
+        />
+      </div>
+      <h2>Move list</h2>
+
+      <div className="flex flex-wrap">
         {moveList.map((move, index) => {
           return (
             <span
@@ -24,25 +32,13 @@ export const MoveList = () => {
               onMouseLeave={() => {
                 setRenderSmallBoard(false)
               }}
-              className={`w-1/2 p-2 text-center ${
+              className={`w-[100px] text-center ${
                 move.moveNumber % 2 === 0 ? 'bg-black text-white' : 'bg-white text-black'
               } ${move.moveNumber === moveCounter - 1 ? 'border border-red-600' : null}`}>
               {move.move}
             </span>
           )
         })}
-      </div>
-
-      <div className="flex h-[250px] w-full flex-col justify-start gap-6 overflow-hidden pl-10 hover:overflow-y-auto">
-        {renderSmallBoard && (
-          <div className="pointer-events-none absolute left-[105%] top-[25%]">
-            <Chessboard
-              boardOrientation={myOrientation as BoardOrientation}
-              boardWidth={170}
-              position={smallBoardFen}
-            />
-          </div>
-        )}
       </div>
     </section>
   )
