@@ -12,7 +12,7 @@ export const Main = ({ roomID }: MainProps) => {
   const [game, setGame] = useState(new Chess())
 
   return (
-    <main className="flex items-center justify-center gap-2">
+    <main className="flex h-full w-full flex-col items-center justify-center gap-2 px-2 py-4 lg:flex-row">
       <Orientation roomID={roomID} />
 
       <ChessboardWrapper roomID={roomID} game={game} setGame={setGame} />

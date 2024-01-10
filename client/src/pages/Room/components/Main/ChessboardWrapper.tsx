@@ -12,8 +12,7 @@ type ChessboardWrapperProps = {
 
 export const ChessboardWrapper = ({ roomID, game, setGame }: ChessboardWrapperProps) => {
   return (
-    <section className="flex flex-col items-center justify-center gap-4">
-      <h1>You are in room nr {roomID}</h1>
+    <section className="flex w-2/4 flex-col items-center justify-center gap-4">
       <ChessboardComponent setGame={setGame} game={game} roomID={roomID!} />
       <ChessboardButtons setGame={setGame} roomID={roomID} />
       <ChessboardFenInput roomID={roomID} setGame={setGame} />

@@ -8,7 +8,7 @@ type ButtonProps = {
 export const Button = ({ btnText, callback, description, disabled }: ButtonProps) => {
   return (
     <div className="flex flex-col items-center justify-center gap-1">
-      <span>{description}</span>
+      <span className="text-center">{description}</span>
       <button
         disabled={disabled ? true : false}
         onClick={callback}
