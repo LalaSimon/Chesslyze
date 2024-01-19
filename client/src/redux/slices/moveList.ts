@@ -26,7 +26,7 @@ const moveListSlice = createSlice({
       const { moveList, whiteMoves, blackMoves, moveCounter } = state
       const updatedMoveList = [...moveList, action.payload]
 
-      if (moveCounter % 2 === 1) {
+      if (moveCounter % 2 === 0) {
         return {
           moveList: updatedMoveList,
           whiteMoves: [...whiteMoves, action.payload],

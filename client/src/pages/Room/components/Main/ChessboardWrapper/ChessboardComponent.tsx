@@ -30,6 +30,8 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
   const { moveCounter } = useTypedSelector(state => state.moveList)
   const dispatch = useTypedDispatch()
 
+  // every move trigger this function
+
   const onDrop = async (sourceSquare: Square, targetSquare: Square) => {
     const move: MoveType = {
       from: sourceSquare,
@@ -55,7 +57,7 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
       fetchOpening(game.fen(), dispatch)
     }
   }
-
+  // drowing arrows function
   const arrowDrow = (arrowsData: Arrow[]) => {
     if (arrowsData.length === 0 && arrowsData !== arrows) {
       setArrows([])
@@ -66,7 +68,7 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
       if (SocketService.socket) GameService.drawArrow(SocketService.socket, arrowsData, roomID)
     }
   }
-
+  //
   const highlightSquare = (square: string) => {
     if (SocketService.socket) {
       GameService.highlightSquare(SocketService.socket, square, roomID)
@@ -76,7 +78,7 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
     }
   }
 
-  const clearHighlightedSquares = () => {
+  const clearAnalyze = () => {
     if (SocketService.socket) {
       GameService.clearAnalyze(SocketService.socket, roomID)
       setArrows([])
@@ -131,7 +133,7 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
   }, [dispatch, game, setGame, highlightSquare])
 
   return (
-    <div onClick={clearHighlightedSquares}>
+    <div onClick={clearAnalyze}>
       <Chessboard
         onSquareRightClick={s => highlightSquare(s)}
         customArrows={arrows}
