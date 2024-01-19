@@ -7,10 +7,10 @@ export const MoveList = () => {
   const [renderSmallBoard, setRenderSmallBoard] = useState<boolean>(false)
   const [smallBoardFen, setSmallBoardFen] = useState<string>('')
   const { myOrientation } = useTypedSelector(state => state.orientation)
-  const { moveList, moveCounter } = useTypedSelector(state => state.moveList)
+  const { blackMoves, whiteMoves } = useTypedSelector(state => state.moveList)
 
   return (
-    <section className="flex h-[400px] w-[200px] flex-col items-center gap-2 overflow-y-auto overflow-x-hidden lg:justify-center">
+    <section className="flex h-1/2 w-full flex-col items-center gap-2  lg:justify-center">
       <div className={`pointer-events-none ${renderSmallBoard ? 'opacity-100' : 'opacity-0'}`}>
         <Chessboard
           boardOrientation={myOrientation as BoardOrientation}
@@ -18,28 +18,43 @@ export const MoveList = () => {
           position={smallBoardFen}
         />
       </div>
-      <h2>Move list</h2>
-
-      <div className="flex flex-wrap">
-        {moveList.map((move, index) => {
-          return (
-            <span
-              key={index}
-              onMouseEnter={() => {
-                setSmallBoardFen(move.fen)
-                setRenderSmallBoard(true)
-              }}
-              onMouseLeave={() => {
-                setRenderSmallBoard(false)
-              }}
-              className={`w-[100px] text-center ${
-                move.moveNumber % 2 === 0 ? 'bg-black text-white' : 'bg-white text-black'
-              } ${move.moveNumber === moveCounter - 1 ? 'border border-red-600' : null}`}>
-              {move.move}
-            </span>
-          )
-        })}
-      </div>
+      <table className="flex h-[450px] w-full flex-col items-center justify-start gap-2 overflow-y-auto overflow-x-hidden border">
+        <caption>Move list</caption>
+        <tbody className="flex w-full gap-1">
+          <tr className="flex w-full flex-col gap-1 text-center">
+            White
+            {whiteMoves.map(move => (
+              <th
+                onMouseEnter={() => {
+                  setSmallBoardFen(move.fen)
+                  setRenderSmallBoard(true)
+                }}
+                onMouseLeave={() => {
+                  setRenderSmallBoard(false)
+                }}
+                className="h-10 w-full border bg-white text-center">
+                {move.move}
+              </th>
+            ))}
+          </tr>
+          <tr className="flex w-full flex-col gap-1 text-center">
+            Black
+            {blackMoves.map(move => (
+              <th
+                onMouseEnter={() => {
+                  setSmallBoardFen(move.fen)
+                  setRenderSmallBoard(true)
+                }}
+                onMouseLeave={() => {
+                  setRenderSmallBoard(false)
+                }}
+                className="h-10 w-full bg-black text-center text-white">
+                {move.move}
+              </th>
+            ))}
+          </tr>
+        </tbody>
+      </table>
     </section>
   )
 }
