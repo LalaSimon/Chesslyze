@@ -15,7 +15,7 @@ export const fenSlice = createSlice({
       return { ...state, fen: action.payload }
     },
     clearFen: state => {
-      return { ...state, fen: '' }
+      return { ...state, fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' }
     },
   },
 })

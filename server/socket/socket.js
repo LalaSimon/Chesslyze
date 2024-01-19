@@ -12,9 +12,11 @@ const socket = server => {
   })
 
   io.on('connection', socket => {
-    socket.on('join_room', room => socket.join(room))
-    analyze(socket)
+    socket.on('join_room', room => {
+      socket.join(room)
+    })
     chess(socket)
+    analyze(socket)
     disconnect(socket)
   })
 }

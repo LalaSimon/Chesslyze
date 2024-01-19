@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import type { MovesEval } from '../../../../../../shared/types/MovesEval'
 
 interface TableBodyProps {
@@ -11,6 +12,22 @@ export const TableBody = ({ movesEval }: TableBodyProps) => {
         <tr key={index} className="border">
           <td>{index + 1}.</td>
           <td>{dataObj.san}</td>
+=======
+import type { openingFenEvalType } from '../../../../../../shared/types/openingFenEval'
+
+type TableBodyProps = {
+  openingList: openingFenEvalType[]
+}
+
+export const TableBody = ({ openingList }: TableBodyProps) => {
+  return (
+    <tbody>
+      {openingList.map((dataObj, index) => (
+        <tr key={index} className="border">
+          <td>{index + 1}.</td>
+          <td>{dataObj.san}</td>
+          <td>{dataObj.black + dataObj.white + dataObj.draws}</td>
+>>>>>>> main
           <td className="flex w-full">
             <div
               className="flex-1 bg-white"
@@ -45,7 +62,11 @@ export const TableBody = ({ movesEval }: TableBodyProps) => {
                 ).toFixed(2)}%`,
               }}>
               {dataObj.black !== 0
+<<<<<<< HEAD
                 ? ((dataObj.white / (dataObj.black + dataObj.white + dataObj.draws)) * 100).toFixed() + '%'
+=======
+                ? ((dataObj.black / (dataObj.black + dataObj.white + dataObj.draws)) * 100).toFixed() + '%'
+>>>>>>> main
                 : '0%'}
             </div>
           </td>
