@@ -68,7 +68,7 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
       if (SocketService.socket) GameService.drawArrow(SocketService.socket, arrowsData, roomID)
     }
   }
-  //
+  // allowing to higlightSquares and unHiglight them
   const highlightSquare = (square: string) => {
     if (SocketService.socket) {
       GameService.highlightSquare(SocketService.socket, square, roomID)
@@ -78,6 +78,7 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
     }
   }
 
+  //clearing both highlights and arrows
   const clearAnalyze = () => {
     if (SocketService.socket) {
       GameService.clearAnalyze(SocketService.socket, roomID)
@@ -86,6 +87,7 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
     }
   }
 
+  //Handling whole sockets listeners
   useEffect(() => {
     const handleArrowsDrowUpdate = (arrowsData: Arrow[]) => {
       setArrows(arrowsData)

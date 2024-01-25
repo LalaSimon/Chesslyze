@@ -43,11 +43,11 @@ export const ChessboardFenInput = ({ setGame, roomID }: ChessboardFenInputProps)
   }, [fen])
 
   return (
-    <div className="flex w-full flex-col gap-1 text-center">
+    <div className="flex w-full flex-col items-center gap-1 text-center">
       <label>Paste fen to change position. ctrl + a {'->'} ctrl + v</label>
       <input
         onChange={e => setInputValue(e.target.value)}
-        className="rounded-lg p-2 text-center text-sm"
+        className="w-[570px] rounded-lg p-2 text-center text-sm"
         value={inputValue || fen}
       />
       <Button disabled={!inputValue} callback={handleFenChange} btnText="change fen" />
