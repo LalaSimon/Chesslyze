@@ -1,8 +1,8 @@
-import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
-import { fetchMovesEval } from '../../../../../shared/utils/LichesAPI'
+import { useTypedDispatch, useTypedSelector } from '../../../../../../redux/store'
+import { fetchMovesEval } from '../../../../../../shared/utils/LichesAPI'
 import { useEffect } from 'react'
-import { TableHeader } from './OpeningTable/TableHeader'
-import { TableBody } from './OpeningTable/TableBody'
+import { TableHeader } from './TableHeader'
+import { TableBody } from './TableBody'
 import { OpeningName } from './OpeningName'
 
 export const OpeningTable = () => {
@@ -19,7 +19,7 @@ export const OpeningTable = () => {
     if (openingList.length === 0) return <span className="text-center">No records found</span>
     if (openingList.length > 0)
       return (
-        <div className="flex h-1/2 max-w-[400px] flex-col items-center justify-start">
+        <div className="flex h-1/2 w-full flex-col items-center justify-start">
           <OpeningName />
           <table className="mt-2 w-full border-collapse overflow-hidden border text-center hover:overflow-auto">
             <TableHeader />

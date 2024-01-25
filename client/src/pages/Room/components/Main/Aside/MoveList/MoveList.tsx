@@ -1,7 +1,7 @@
 import { Chessboard } from 'react-chessboard'
 import { useState } from 'react'
 import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
-import { useTypedSelector } from '../../../../../redux/store'
+import { useTypedSelector } from '../../../../../../redux/store'
 
 export const MoveList = () => {
   const [renderSmallBoard, setRenderSmallBoard] = useState<boolean>(false)
@@ -10,8 +10,9 @@ export const MoveList = () => {
   const { blackMoves, whiteMoves } = useTypedSelector(state => state.moveList)
 
   return (
-    <section className="flex h-1/2 w-full flex-col items-center gap-2  lg:justify-center">
-      <div className={`pointer-events-none ${renderSmallBoard ? 'opacity-100' : 'opacity-0'}`}>
+    <section className="flex h-1/2 w-full flex-col items-center gap-2">
+      <div
+        className={`pointer-events-none ${renderSmallBoard ? 'opacity-100' : 'opacity-0'} hidden xl:block`}>
         <Chessboard
           boardOrientation={myOrientation as BoardOrientation}
           boardWidth={170}

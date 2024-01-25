@@ -1,10 +1,10 @@
-import { Button } from '../../../../shared/components/Button'
+import { Button } from '../../../../../shared/components/Button'
 import { useEffect } from 'react'
-import { useTypedDispatch, useTypedSelector } from '../../../../redux/store'
-import { setMyOrientation } from '../../../../redux/slices/orientation'
-import { setOpponentOrientation } from '../../../../redux/slices/orientation'
-import SocketService from '../../../../services/SocketService'
-import GameService from '../../../../services/GameService'
+import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
+import { setMyOrientation } from '../../../../../redux/slices/orientation'
+import { setOpponentOrientation } from '../../../../../redux/slices/orientation'
+import SocketService from '../../../../../services/SocketService'
+import GameService from '../../../../../services/GameService'
 import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 
 type OrientationProps = {
