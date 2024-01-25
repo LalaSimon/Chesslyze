@@ -1,6 +1,6 @@
-const analyze = require('./analyze')
+const analyze = require('../chess/analyze')
 const disconnect = require('./disconnect')
-const chess = require('./chess')
+const chess = require('../chess/chess')
 const { Server } = require('socket.io')
 
 const socket = server => {

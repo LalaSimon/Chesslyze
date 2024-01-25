@@ -1,4 +1,4 @@
-const socket = require('./socket/socket')
+const socket = require('./socket/connection/socket')
 const Express = require('express')
 const app = new Express()
 const http = require('http')
@@ -9,7 +9,6 @@ const cors = require('cors')
 const main = () => {
   app.use(cors())
   socket(server)
-  app.get('/', (req, res) => {})
   server.listen(port, () => {
     console.log(`Server listening on port ${port}`)
   })
