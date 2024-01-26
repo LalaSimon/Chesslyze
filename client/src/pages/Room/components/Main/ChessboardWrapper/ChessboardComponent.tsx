@@ -4,7 +4,7 @@ import { Square, Chess } from 'chess.js'
 import { SetStateAction, Dispatch, useState, useEffect } from 'react'
 import { MoveObject } from '../../../../../shared/types/MoveObject'
 import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
-import { setFen } from '../../../../../redux/slices/fen'
+import { setFen, setUndoRedoFen } from '../../../../../redux/slices/fen'
 import { setMoveList } from '../../../../../redux/slices/moveList'
 import { fetchMovesEval, fetchOpening } from '../../../../../shared/utils/LichesAPI'
 import GameService from '../../../../../services/GameService'
@@ -27,6 +27,7 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
   const [highlightedSquares, setHighlightedSquares] = useState<string[]>([])
   const [arrows, setArrows] = useState<Arrow[]>([])
   const { myOrientation } = useTypedSelector(state => state.orientation)
+  const { undoredoFen } = useTypedSelector(state => state.fen)
   const dispatch = useTypedDispatch()
 
   // every move trigger this function
@@ -38,9 +39,8 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
       promotion: 'q',
     }
 
-    // if checking bellow is checking if move is legall and if its true he run function with move
-
-    if (game.move(move) && SocketService.socket && game.history({ verbose: true })) {
+    // checking bellow if move is legall and if its true he run function with move
+    if (!undoredoFen && SocketService.socket && game.move(move) && game.history({ verbose: true })) {
       const moves = game.history({ verbose: true })
       const moveObject = moves[0]
 
@@ -54,13 +54,12 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
   }
   // drowing arrows function
   const arrowDrow = (arrowsData: Arrow[]) => {
-    if (arrowsData.length === 0 && arrowsData !== arrows) {
+    if (arrowsData.length === 0 && arrowsData !== arrows && SocketService.socket) {
       setArrows([])
-      if (SocketService.socket) GameService.drawArrow(SocketService.socket, arrowsData, roomID)
-    } else {
-      if (arrowsData.flat().join() === arrows.flat().join()) return
+      GameService.drawArrow(SocketService.socket, arrowsData, roomID)
+    } else if (SocketService.socket) {
       setArrows(arrowsData)
-      if (SocketService.socket) GameService.drawArrow(SocketService.socket, arrowsData, roomID)
+      GameService.drawArrow(SocketService.socket, arrowsData, roomID)
     }
   }
   // allowing to higlightSquares and unHiglight them
@@ -80,6 +79,15 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
       setArrows([])
       setHighlightedSquares([])
     }
+  }
+
+  const positionChecker = () => {
+    if (undoredoFen === game.fen()) {
+      dispatch(setUndoRedoFen(''))
+      return game.fen()
+    }
+    if (!undoredoFen) return game.fen()
+    if (undoredoFen) return undoredoFen
   }
 
   //Handling whole sockets listeners
@@ -135,7 +143,7 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
         customArrows={arrows}
         onArrowsChange={arrowDrow}
         onPieceDrop={onDrop}
-        position={game.fen()}
+        position={positionChecker()}
         boardOrientation={myOrientation}
         boardWidth={570}
         customSquareStyles={{

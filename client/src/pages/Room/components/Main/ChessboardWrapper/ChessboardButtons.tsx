@@ -1,8 +1,8 @@
 import { Button } from '../../../../../shared/components/Button'
-import { Dispatch, SetStateAction, useEffect } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { Chess } from 'chess.js'
 import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
-import { clearFen } from '../../../../../redux/slices/fen'
+import { clearFen, setUndoRedoFen } from '../../../../../redux/slices/fen'
 import { clearMoveList } from '../../../../../redux/slices/moveList'
 import { setOpeningName } from '../../../../../redux/slices/openingInfo'
 import { fetchMovesEval } from '../../../../../shared/utils/LichesAPI'
@@ -16,11 +16,14 @@ type ChessboardButtonsProps = {
 
 export const ChessboardButtons = ({ setGame, roomID }: ChessboardButtonsProps) => {
   const { fen } = useTypedSelector(state => state.fen)
+  const { moveCounter, moveList } = useTypedSelector(state => state.moveList)
+  const [showFenNumber, setShowFenNumber] = useState<number>(0)
   const dispatch = useTypedDispatch()
 
   const clearBoard = async () => {
     if (SocketService.socket) {
       GameService.cleanBoard(SocketService.socket, roomID)
+      setShowFenNumber(0)
       dispatch(clearFen())
       dispatch(clearMoveList())
       dispatch(setOpeningName(''))
@@ -37,7 +40,19 @@ export const ChessboardButtons = ({ setGame, roomID }: ChessboardButtonsProps) =
       console.error(err)
     }
   }
-
+  const handleUndo = () => {
+    if (!moveList[moveList.length - (2 - showFenNumber)]) {
+      dispatch(setUndoRedoFen(moveList[0].before))
+      setShowFenNumber(prevstate => --prevstate)
+    } else {
+      dispatch(setUndoRedoFen(moveList[moveList.length - (2 - showFenNumber)].after))
+      setShowFenNumber(prevstate => --prevstate)
+    }
+  }
+  const handleRedo = () => {
+    setShowFenNumber(prevstate => ++prevstate)
+    dispatch(setUndoRedoFen(moveList[moveList.length + showFenNumber].after))
+  }
   useEffect(() => {
     const clearBoardHandler = async () => {
       setGame(new Chess())
@@ -57,8 +72,12 @@ export const ChessboardButtons = ({ setGame, roomID }: ChessboardButtonsProps) =
 
   return (
     <section className="flex gap-5">
-      <Button btnText="Undo" />
-      <Button btnText="Redo" />
+      <Button
+        disabled={moveCounter === -1 || !moveList[moveList.length - (1 - showFenNumber)]}
+        callback={handleUndo}
+        btnText="Undo"
+      />
+      <Button disabled={showFenNumber === 0} callback={handleRedo} btnText="Redo" />
       <Button callback={clearBoard} btnText="Clear" />
       <Button callback={copyFen} btnText="Copy fen" />
     </section>
