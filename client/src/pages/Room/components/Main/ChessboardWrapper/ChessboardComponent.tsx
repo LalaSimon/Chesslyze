@@ -5,7 +5,7 @@ import { SetStateAction, Dispatch, useState, useEffect } from 'react'
 import { MoveObject } from '../../../../../shared/types/MoveObject'
 import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
 import { setFen } from '../../../../../redux/slices/fen'
-import { addToMoveCounter, setMoveList } from '../../../../../redux/slices/moveList'
+import { setMoveList } from '../../../../../redux/slices/moveList'
 import { fetchMovesEval, fetchOpening } from '../../../../../shared/utils/LichesAPI'
 import GameService from '../../../../../services/GameService'
 import SocketService from '../../../../../services/SocketService'
@@ -27,7 +27,6 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
   const [highlightedSquares, setHighlightedSquares] = useState<string[]>([])
   const [arrows, setArrows] = useState<Arrow[]>([])
   const { myOrientation } = useTypedSelector(state => state.orientation)
-  const { moveCounter } = useTypedSelector(state => state.moveList)
   const dispatch = useTypedDispatch()
 
   // every move trigger this function
@@ -41,20 +40,16 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
 
     // if checking bellow is checking if move is legall and if its true he run function with move
 
-    if (game.move(move) && SocketService.socket) {
-      const sanNotationMove = game.history().pop() as string
-      const moveObject: MoveObject = {
-        move: sanNotationMove,
-        fen: game.fen(),
-        moveNumber: moveCounter,
-      }
+    if (game.move(move) && SocketService.socket && game.history({ verbose: true })) {
+      const moves = game.history({ verbose: true })
+      const moveObject = moves[0]
+
       GameService.gameUpdate(SocketService.socket, moveObject, roomID)
-      setGame(new Chess(game.fen()))
-      dispatch(addToMoveCounter())
-      dispatch(setFen(game.fen()))
+      setGame(new Chess(moveObject.after))
+      dispatch(setFen(moveObject.after))
       dispatch(setMoveList(moveObject))
-      fetchMovesEval(game.fen(), dispatch)
-      fetchOpening(game.fen(), dispatch)
+      fetchMovesEval(moveObject.after, dispatch)
+      fetchOpening(moveObject.after, dispatch)
     }
   }
   // drowing arrows function
@@ -105,13 +100,12 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
     }
 
     const handleGameUpdate = async (data: MoveObject) => {
-      if (game.move(data.move)) {
-        setGame(new Chess(game.fen()))
-        dispatch(addToMoveCounter())
-        dispatch(setFen(game.fen()))
+      if (game.move(data.san)) {
+        setGame(new Chess(data.after))
+        dispatch(setFen(data.after))
         dispatch(setMoveList(data))
-        fetchMovesEval(game.fen(), dispatch)
-        fetchOpening(game.fen(), dispatch)
+        fetchMovesEval(data.after, dispatch)
+        fetchOpening(data.after, dispatch)
       }
     }
 
