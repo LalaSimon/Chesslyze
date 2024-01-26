@@ -10,7 +10,7 @@ const moveListSlice = createSlice({
   name: 'moveList',
   initialState: {
     moveList: [],
-    moveCounter: 0,
+    moveCounter: -1,
   } as MoveListState<MoveObject>,
 
   reducers: {
@@ -21,7 +21,7 @@ const moveListSlice = createSlice({
       return { moveList: updatedMoveList, moveCounter }
     },
     clearMoveList: () => {
-      return { moveList: [], whiteMoves: [], blackMoves: [], moveCounter: 1 }
+      return { moveList: [], whiteMoves: [], blackMoves: [], moveCounter: -1 }
     },
   },
 })
