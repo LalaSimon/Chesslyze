@@ -16,7 +16,7 @@ export const BlackMoves = ({ setRenderSmallBoard, setSmallBoardFen }: TableProps
           onMouseLeave={() => {
             setRenderSmallBoard(false)
           }}
-          className="h-10 w-full border bg-white text-center">
+          className="h-10 w-full border bg-black text-center text-white">
           {move.move}
         </th>
       ))}
