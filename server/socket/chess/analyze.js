@@ -22,5 +22,9 @@ const analyze = socket => {
   socket.on('cleanBoard', data => socket.broadcast.to(data.roomID).emit('onCleanBoardUpdate'))
 
   socket.on('fenChange', data => socket.broadcast.to(data.roomID).emit('onFenChangeUpdate', data.fen))
+
+  socket.on('undoMove', data => socket.broadcast.to(data.roomID).emit('onUndoMoveUpdate'))
+
+  socket.on('redoMove', data => socket.broadcast.to(data.roomID).emit('onRedoMoveUpdate'))
 }
 module = module.exports = analyze
