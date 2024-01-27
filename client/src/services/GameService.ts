@@ -92,5 +92,22 @@ class GameService {
   public onCleanBoardUpdate(socket: Socket) {
     socket.on('onCleanBoardUpdate', () => true)
   }
+
+  public undoMove(socket: Socket, roomID: string) {
+    socket.emit('undoMove', { roomID })
+  }
+
+  public onUndoMoveUpdate(socket: Socket) {
+    socket.on('onUndoMoveUpdate', () => true)
+  }
+
+  public redoMove(socket: Socket, roomID: string) {
+    socket.emit('redoMove', { roomID })
+  }
+
+  public onRedoMoveUpdate(socket: Socket) {
+    socket.on('onRedoMoveUpdate', () => true)
+  }
 }
+
 export default new GameService()

@@ -40,19 +40,27 @@ export const ChessboardButtons = ({ setGame, roomID }: ChessboardButtonsProps) =
       console.error(err)
     }
   }
+
   const handleUndo = () => {
-    if (!moveList[moveList.length - (2 - showFenNumber)]) {
+    if (!moveList[moveList.length - (2 - showFenNumber)] && SocketService.socket) {
+      GameService.undoMove(SocketService.socket, roomID)
       dispatch(setUndoRedoFen(moveList[0].before))
       setShowFenNumber(prevstate => --prevstate)
-    } else {
+    } else if (SocketService.socket) {
+      GameService.undoMove(SocketService.socket, roomID)
       dispatch(setUndoRedoFen(moveList[moveList.length - (2 - showFenNumber)].after))
       setShowFenNumber(prevstate => --prevstate)
     }
   }
+
   const handleRedo = () => {
-    setShowFenNumber(prevstate => ++prevstate)
-    dispatch(setUndoRedoFen(moveList[moveList.length + showFenNumber].after))
+    if (SocketService.socket) {
+      GameService.redoMove(SocketService.socket, roomID)
+      setShowFenNumber(prevstate => ++prevstate)
+      dispatch(setUndoRedoFen(moveList[moveList.length + showFenNumber].after))
+    }
   }
+
   useEffect(() => {
     const clearBoardHandler = async () => {
       setGame(new Chess())
@@ -62,13 +70,36 @@ export const ChessboardButtons = ({ setGame, roomID }: ChessboardButtonsProps) =
       await fetchMovesEval('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', dispatch)
     }
 
+    const undoMoveHandler = () => {
+      if (!moveList[moveList.length - (2 - showFenNumber)]) {
+        dispatch(setUndoRedoFen(moveList[0].before))
+        setShowFenNumber(prevstate => --prevstate)
+      } else {
+        dispatch(setUndoRedoFen(moveList[moveList.length - (2 - showFenNumber)].after))
+        setShowFenNumber(prevstate => --prevstate)
+      }
+    }
+
+    const redoMoveHandler = () => {
+      setShowFenNumber(prevstate => ++prevstate)
+      dispatch(setUndoRedoFen(moveList[moveList.length + showFenNumber].after))
+    }
+
     if (SocketService.socket) GameService.onCleanBoardUpdate(SocketService.socket)
     SocketService.socket?.on('onCleanBoardUpdate', clearBoardHandler)
 
+    if (SocketService.socket) GameService.onUndoMoveUpdate(SocketService.socket)
+    SocketService.socket?.on('onUndoMoveUpdate', undoMoveHandler)
+
+    if (SocketService.socket) GameService.onRedoMoveUpdate(SocketService.socket)
+    SocketService.socket?.on('onRedoMoveUpdate', redoMoveHandler)
+
     return () => {
       if (SocketService.socket) SocketService.socket.off('onCleanBoardUpdate', clearBoardHandler)
+      if (SocketService.socket) SocketService.socket.off('onUndoMoveUpdate', undoMoveHandler)
+      if (SocketService.socket) SocketService.socket.off('onRedoMoveUpdate', redoMoveHandler)
     }
-  }, [dispatch, setGame, fen])
+  }, [dispatch, setGame, fen, moveList, showFenNumber])
 
   return (
     <section className="flex gap-5">
