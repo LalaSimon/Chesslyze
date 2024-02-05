@@ -1,4 +1,4 @@
-export type openingFenEvalType = {
+export type OpeningFenEvalType = {
   uci: string
   san: string
   game: null

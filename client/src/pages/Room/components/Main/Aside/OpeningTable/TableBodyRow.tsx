@@ -1,4 +1,4 @@
-import type { openingFenEvalType } from '../../../../../../shared/types/openingFenEval'
+import type { openingFenEvalType } from '../../../../../../shared/types/OpeningFenEvalType'
 
 type TableBodyRowProps = {
   openingList: openingFenEvalType[]

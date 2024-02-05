@@ -48,8 +48,8 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
       setGame(new Chess(moveObject.after))
       dispatch(setFen(moveObject.after))
       dispatch(setMoveList(moveObject))
-      fetchMovesEval(moveObject.after, dispatch)
-      fetchOpening(moveObject.after, dispatch)
+      await fetchMovesEval(moveObject.after, dispatch)
+      await fetchOpening(moveObject.after, dispatch)
     }
   }
   // drowing arrows function
@@ -112,8 +112,8 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
         setGame(new Chess(data.after))
         dispatch(setFen(data.after))
         dispatch(setMoveList(data))
-        fetchMovesEval(data.after, dispatch)
-        fetchOpening(data.after, dispatch)
+        await fetchMovesEval(data.after, dispatch)
+        await fetchOpening(data.after, dispatch)
       }
     }
 
