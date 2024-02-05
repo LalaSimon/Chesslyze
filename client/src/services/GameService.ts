@@ -15,7 +15,7 @@ class GameService {
     })
   }
 
-  public async gameUpdate(socket: Socket, moveObject: object, roomID: string) {
+  public gameUpdate(socket: Socket, moveObject: object, roomID: string) {
     socket.emit('make_a_move', {
       moveObject,
       roomID,
@@ -26,7 +26,7 @@ class GameService {
     socket.on('move_made', data => data)
   }
 
-  public async highlightSquare(socket: Socket, square: string, roomID: string) {
+  public highlightSquare(socket: Socket, square: string, roomID: string) {
     socket.emit('send_highlight_square', {
       square,
       roomID,
