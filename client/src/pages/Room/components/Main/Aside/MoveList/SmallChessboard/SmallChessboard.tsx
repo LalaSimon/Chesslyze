@@ -1,4 +1,4 @@
-import { useTypedSelector } from '../../../../../../../redux/store'
+import { useTypedSelector } from '@redux/store'
 import { Chessboard } from 'react-chessboard'
 import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 

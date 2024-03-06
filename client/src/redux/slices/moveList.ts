@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { MoveObject } from '../../shared/types/MoveObject'
+import { MoveObject } from '@shared/types/MoveObject'
 
 type MoveListState<T> = {
   moveList: T[]
@@ -15,7 +15,9 @@ const moveListSlice = createSlice({
 
   reducers: {
     setMoveList: (state, action: PayloadAction<MoveObject>) => {
-      let { moveList, moveCounter } = state
+      let moveCounter = state.moveCounter
+      const moveList = state.moveList
+
       moveCounter++
       const updatedMoveList = [...moveList, action.payload]
       return { moveList: updatedMoveList, moveCounter }

@@ -1,8 +1,8 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import SocketService from '../../../services/SocketService'
-import GameService from '../../../services/GameService'
-import { Button } from '../../../shared/components/Button'
+import SocketService from '@services/SocketService'
+import GameService from '@services/GameService'
+import { Button } from '@shared/components/Button'
 
 export const Main = () => {
   const [roomID, setRoomID] = useState('')

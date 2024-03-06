@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from 'react'
-import { WhiteMoves } from './WhiteMoves'
+
 import { BlackMoves } from './BlackMoves'
+import { WhiteMoves } from './WhiteMoves'
 
 export type TableProps = {
   setSmallBoardFen: Dispatch<SetStateAction<string>>

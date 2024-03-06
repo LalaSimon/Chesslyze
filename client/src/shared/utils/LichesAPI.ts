@@ -1,6 +1,5 @@
-import { setOpeningList } from '../../redux/slices/openingInfo'
-import { setOpeningName } from '../../redux/slices/openingInfo'
-import { AppDispatch } from '../../redux/store'
+import { setOpeningList, setOpeningName } from '@redux/slices/openingInfo'
+import { AppDispatch } from '@redux/store'
 
 export const fetchMovesEval = async (fen: string, dispatch: AppDispatch) => {
   return await fetch(`https://explorer.lichess.ovh/masters?fen=${fen}`)

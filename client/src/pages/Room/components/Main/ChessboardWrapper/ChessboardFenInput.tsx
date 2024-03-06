@@ -1,10 +1,11 @@
 import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { Chess } from 'chess.js'
-import { Button } from '../../../../../shared/components/Button'
-import { setFen } from '../../../../../redux/slices/fen'
-import SocketService from '../../../../../services/SocketService'
-import GameService from '../../../../../services/GameService'
+
+import { Button } from '@shared/components/Button'
+import { setFen } from '@redux/slices/fen'
+import GameService from '@services/GameService'
+import SocketService from '@services/SocketService'
 
 type ChessboardFenInputProps = {
   setGame: Dispatch<SetStateAction<Chess>>
@@ -40,7 +41,7 @@ export const ChessboardFenInput = ({ setGame, roomID }: ChessboardFenInputProps)
         SocketService.socket.off('onFenChangeUpdate', fenChangeHandler)
       }
     }
-  }, [fen])
+  }, [dispatch, fen, setGame])
 
   return (
     <div className="flex w-full flex-col items-center gap-1 text-center">

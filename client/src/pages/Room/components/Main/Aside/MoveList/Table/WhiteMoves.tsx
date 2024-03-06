@@ -1,4 +1,4 @@
-import { useTypedSelector } from '../../../../../../../redux/store'
+import { useTypedSelector } from '@redux/store'
 import { TableProps } from './Table'
 
 export const WhiteMoves = ({ setRenderSmallBoard, setSmallBoardFen }: TableProps) => {

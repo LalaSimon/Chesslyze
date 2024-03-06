@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import type { OpeningFenEvalType } from '../../shared/types/OpeningFenEvalType'
+import { OpeningFenEvalType } from '@shared/types/OpeningFenEvalType'
 
 type openingInfoType = {
   openingList: OpeningFenEvalType[]
