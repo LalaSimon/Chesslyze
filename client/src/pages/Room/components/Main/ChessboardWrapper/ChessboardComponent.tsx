@@ -2,14 +2,15 @@
 import { Chessboard } from 'react-chessboard'
 import { Square, Chess } from 'chess.js'
 import { SetStateAction, Dispatch, useState, useEffect } from 'react'
-import { MoveObject } from '../../../../../shared/types/MoveObject'
-import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
-import { setFen, setUndoRedoFen } from '../../../../../redux/slices/fen'
-import { setMoveList } from '../../../../../redux/slices/moveList'
-import { fetchMovesEval, fetchOpening } from '../../../../../shared/utils/LichesAPI'
-import GameService from '../../../../../services/GameService'
-import SocketService from '../../../../../services/SocketService'
 import { Arrow } from 'react-chessboard/dist/chessboard/types'
+
+import { MoveObject } from '@shared/types/MoveObject'
+import { useTypedDispatch, useTypedSelector } from '@redux/store'
+import { setFen, setUndoRedoFen } from '@redux/slices/fen'
+import { setMoveList } from '@redux/slices/moveList'
+import { fetchMovesEval, fetchOpening } from '@shared/utils/LichesAPI'
+import GameService from '@services/GameService'
+import SocketService from '@services/SocketService'
 
 type ChessboardComponentProps = {
   game: Chess

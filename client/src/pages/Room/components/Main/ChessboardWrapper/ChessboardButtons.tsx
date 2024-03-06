@@ -1,13 +1,14 @@
-import { Button } from '../../../../../shared/components/Button'
 import { Dispatch, SetStateAction, useEffect, useRef } from 'react'
 import { Chess } from 'chess.js'
-import { useTypedDispatch, useTypedSelector } from '../../../../../redux/store'
-import { clearFen, setUndoRedoFen } from '../../../../../redux/slices/fen'
-import { clearMoveList } from '../../../../../redux/slices/moveList'
-import { setOpeningName } from '../../../../../redux/slices/openingInfo'
-import { fetchMovesEval } from '../../../../../shared/utils/LichesAPI'
-import SocketService from '../../../../../services/SocketService'
-import GameService from '../../../../../services/GameService'
+
+import { Button } from '@shared/components/Button'
+import { useTypedDispatch, useTypedSelector } from '@redux/store'
+import { clearFen, setUndoRedoFen } from '@redux/slices/fen'
+import { clearMoveList } from '@redux/slices/moveList'
+import { setOpeningName } from '@redux/slices/openingInfo'
+import { fetchMovesEval } from '@shared/utils/LichesAPI'
+import SocketService from '@services/SocketService'
+import GameService from '@services/GameService'
 
 type ChessboardButtonsProps = {
   setGame: Dispatch<SetStateAction<Chess>>

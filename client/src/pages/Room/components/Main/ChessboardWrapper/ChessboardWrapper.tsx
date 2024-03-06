@@ -1,7 +1,8 @@
 import { Chess } from 'chess.js'
+import { Dispatch, SetStateAction } from 'react'
+
 import { ChessboardComponent } from './ChessboardComponent'
 import { ChessboardButtons } from './ChessboardButtons'
-import { Dispatch, SetStateAction } from 'react'
 import { ChessboardFenInput } from './ChessboardFenInput'
 
 type ChessboardWrapperProps = {

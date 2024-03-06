@@ -1,7 +1,8 @@
-import type { openingFenEvalType } from '../../../../../../shared/types/OpeningFenEvalType'
+import type { OpeningFenEvalType } from '@shared/types/OpeningFenEvalType'
 import { TableBodyRow } from './TableBodyRow'
+
 type TableBodyProps = {
-  openingList: openingFenEvalType[]
+  openingList: OpeningFenEvalType[]
 }
 
 export const TableBody = ({ openingList }: TableBodyProps) => {

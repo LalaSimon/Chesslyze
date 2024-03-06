@@ -1,11 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import Home from './pages/Home/Home.tsx'
-import Room from './pages/Room/Room.tsx'
 import './index.css'
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import store from './redux/store.ts'
+
+import Home from '@pages/Home/Home.tsx'
+import Room from '@pages/Room/Room.tsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(

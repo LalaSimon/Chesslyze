@@ -1,4 +1,4 @@
-import { useTypedSelector } from '../../../../../../redux/store'
+import { useTypedSelector } from '@redux/store'
 
 export const OpeningName = () => {
   const { openingName } = useTypedSelector(state => state.openingInfo)

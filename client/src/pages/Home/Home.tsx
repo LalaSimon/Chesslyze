@@ -1,5 +1,5 @@
-import { Header } from './components/Header'
-import { Main } from './components/Main'
+import { Header } from '@pages/Home/components/Header'
+import { Main } from '@pages/Home/components/Main'
 
 const Home = () => {
   return (

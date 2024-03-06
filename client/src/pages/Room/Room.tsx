@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
-import { Header } from './components/Header/Header'
-import { Main } from './components/Main/Main'
+import { Header } from '@pages/Room/components/Header/Header'
+import { Main } from '@pages/Room/components/Main/Main'
 
 const Room = () => {
   const { roomID } = useParams()
