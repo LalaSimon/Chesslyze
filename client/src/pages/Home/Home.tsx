@@ -1,13 +1,14 @@
 import { Header } from '@pages/Home/components/Header'
 import { Main } from '@pages/Home/components/Main'
+import { Layout } from '@shared/components/Layout'
 
-const Home = () => {
+export const Home = () => {
   return (
-    <div>
-      <Header />
-      <Main />
-    </div>
+    <Layout>
+      <>
+        <Header />
+        <Main />
+      </>
+    </Layout>
   )
 }
-
-export default Home

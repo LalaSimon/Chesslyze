@@ -1,4 +1,4 @@
-import { setOpeningList, setOpeningName } from '@redux/slices/openingInfo'
+import { setOpeningList, setOpeningName } from '@redux/slices/Analysis/openingInfo'
 import { AppDispatch } from '@redux/store'
 
 export const fetchMovesEval = async (fen: string, dispatch: AppDispatch) => {

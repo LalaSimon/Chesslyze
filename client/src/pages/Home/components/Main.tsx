@@ -15,7 +15,7 @@ export const Main = () => {
   }
   const connectSocket = async () => {
     await SocketService.connect(socketURL).catch((err: string) => {
-      console.log('error:', err)
+      throw new Error(err)
     })
   }
   useEffect(() => {

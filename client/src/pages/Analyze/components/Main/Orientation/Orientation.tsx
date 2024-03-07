@@ -3,7 +3,7 @@ import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 
 import { Button } from '@shared/components/Button'
 import { useTypedDispatch, useTypedSelector } from '@redux/store'
-import { setMyOrientation, setOpponentOrientation } from '@redux/slices/orientation'
+import { setMyOrientation, setOpponentOrientation } from '@redux/slices/Analysis/orientation'
 import GameService from '@services/GameService'
 import SocketService from '@services/SocketService'
 
