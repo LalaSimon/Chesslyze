@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { type TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
-import fenReducer from './slices/fen'
-import orientationReducer from './slices/orientation'
-import moveListReducer from './slices/moveList'
-import openingInfoReducer from './slices/openingInfo'
-import analizeReducer from './slices/analize'
+import fenReducer from './slices/Analysis/fen'
+import orientationReducer from './slices/Analysis/orientation'
+import moveListReducer from './slices/Analysis/moveList'
+import openingInfoReducer from './slices/Analysis/openingInfo'
+import analizeReducer from './slices/Analysis/analize'
 
 const store = configureStore({
   reducer: {

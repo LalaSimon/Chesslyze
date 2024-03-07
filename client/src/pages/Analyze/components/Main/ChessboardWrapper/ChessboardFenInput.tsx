@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { Chess } from 'chess.js'
 
 import { Button } from '@shared/components/Button'
-import { setFen } from '@redux/slices/fen'
+import { setFen } from '@redux/slices/Analysis/fen'
 import GameService from '@services/GameService'
 import SocketService from '@services/SocketService'
 
