@@ -7,7 +7,7 @@ class GameService {
 
   public async joinRoom(socket: Socket, roomID: string, navigate: NavigateFunction) {
     return new Promise(resolve => {
-      navigate(`/${roomID}`)
+      navigate(`/analyze/room/${roomID}`)
       socket.emit('join_room', roomID)
       socket.on('room_joined', msg => {
         resolve(msg)
