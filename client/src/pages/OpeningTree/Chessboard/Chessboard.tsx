@@ -1,16 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Chessboard } from 'react-chessboard'
 import { Square, Chess } from 'chess.js'
-import { SetStateAction, Dispatch, useState } from 'react'
-import { Arrow } from 'react-chessboard/dist/chessboard/types'
+import { SetStateAction, Dispatch, useState, useEffect } from 'react'
+import { Arrow, BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 
 import { useTypedSelector } from '@redux/store'
 import { fetchLichessInfo } from '@shared/utils/LichesAPI'
 import { OpeningFenEvalType } from '@shared/types/OpeningFenEvalType'
+import { splitMovesToArrows } from '@shared/utils/splitMovesToArrows'
 
 type ChessboardComponentProps = {
   game: Chess
   setGame: Dispatch<SetStateAction<Chess>>
+  setMovesList: Dispatch<SetStateAction<OpeningFenEvalType[]>>
 }
 
 type MoveType = {
@@ -19,18 +21,11 @@ type MoveType = {
   promotion: string
 }
 
-function splitStringInHalf(str: string) {
-  const length = str.length
-  const halfLength = Math.floor(length / 2)
-  const firstHalf = str.substring(0, halfLength)
-  const secondHalf = str.substring(halfLength)
-  return [firstHalf, secondHalf]
-}
-
-export const OpeningChessboard = ({ game, setGame }: ChessboardComponentProps) => {
+export const OpeningChessboard = ({ game, setGame, setMovesList }: ChessboardComponentProps) => {
   const [highlightedSquares, setHighlightedSquares] = useState<string[]>([])
   const [arrows, setArrows] = useState<Arrow[]>([])
-  const { myOrientation } = useTypedSelector(state => state.orientation)
+  const [myOrientation, setMyOrientation] = useState<BoardOrientation>('white')
+
   const { undoredoFen } = useTypedSelector(state => state.fen)
 
   // every move trigger this function
@@ -48,9 +43,10 @@ export const OpeningChessboard = ({ game, setGame }: ChessboardComponentProps) =
       const moveObject = moves[0]
       setGame(new Chess(moveObject.after))
       const data = await fetchLichessInfo(game.fen())
+      setMovesList(data.moves)
       const arr: Arrow[] = []
       data.moves.map((move: OpeningFenEvalType, index: number) => {
-        index < 3 ? arr.push(splitStringInHalf(move.uci) as Arrow) : null
+        index < 3 ? arr.push(splitMovesToArrows(move.uci) as Arrow) : null
       })
       setArrows(arr)
     }
@@ -68,6 +64,21 @@ export const OpeningChessboard = ({ game, setGame }: ChessboardComponentProps) =
     setArrows([])
     setHighlightedSquares([])
   }
+
+  //listener for f shortcut
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'f') {
+        setMyOrientation(myOrientation === 'white' ? 'black' : 'white')
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [myOrientation])
 
   return (
     <div onClick={clearAnalyze}>
