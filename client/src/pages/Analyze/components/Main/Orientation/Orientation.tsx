@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 
 import { Button } from '@shared/components/Button'
@@ -16,17 +16,33 @@ export const Orientation = ({ roomID }: OrientationProps) => {
   const opponentOrientation = useTypedSelector(state => state.orientation.opponentOrientation)
   const dispatch = useTypedDispatch()
 
-  const handleOrietnation = () => {
+  const handleOrietnation = useCallback(() => {
     dispatch(setMyOrientation(myOrientation === 'white' ? 'black' : 'white'))
     if (SocketService.socket) GameService.changeOrientation(SocketService.socket, myOrientation, roomID)
-  }
+  }, [dispatch, myOrientation, roomID])
 
-  const changeOtherPlayerOrientation = () => {
+  const changeOtherPlayerOrientation = useCallback(() => {
     dispatch(setOpponentOrientation(opponentOrientation === 'white' ? 'black' : 'white'))
     if (SocketService.socket)
       GameService.otherPlayerChangeOrientation(SocketService.socket, opponentOrientation, roomID)
-  }
+  }, [dispatch, opponentOrientation, roomID])
 
+  //useEffect for keys orientation switchers
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'f') handleOrietnation()
+      if (event.key === 'g') changeOtherPlayerOrientation()
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [changeOtherPlayerOrientation, handleOrietnation])
+
+  // listeners to handle sockets
   useEffect(() => {
     const handleOrientationChange = (orientation: BoardOrientation) => {
       dispatch(setOpponentOrientation(orientation === 'black' ? 'white' : 'black'))
@@ -54,12 +70,16 @@ export const Orientation = ({ roomID }: OrientationProps) => {
 
   return (
     <section className="mr-2 flex w-1/4 gap-3 lg:flex-col">
-      <Button callback={handleOrietnation} btnText={myOrientation} description={'your orientation'} />
+      <Button
+        callback={handleOrietnation}
+        btnText={myOrientation}
+        description={'your orientation (press f)'}
+      />
 
       <Button
         callback={changeOtherPlayerOrientation}
         btnText={opponentOrientation}
-        description={'user orientation'}
+        description={'user orientation (press g)'}
       />
     </section>
   )

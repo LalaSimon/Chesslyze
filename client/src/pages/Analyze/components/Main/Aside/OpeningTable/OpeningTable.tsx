@@ -1,13 +1,17 @@
-import { useTypedDispatch, useTypedSelector } from '@redux/store'
+import { useTypedDispatch } from '@redux/store'
 import { fetchMovesEval } from '@shared/utils/LichesAPI'
 import { useEffect } from 'react'
 import { TableHeader } from './TableHeader'
 import { TableBody } from './TableBody'
 import { OpeningName } from './OpeningName'
+import { OpeningFenEvalType } from '@shared/types/OpeningFenEvalType'
 
-export const OpeningTable = () => {
-  const { fen } = useTypedSelector(state => state.fen)
-  const { openingList } = useTypedSelector(state => state.openingInfo)
+type OpeningTableType = {
+  fen: string
+  openingList: OpeningFenEvalType[]
+}
+
+export const OpeningTable = ({ fen, openingList }: OpeningTableType) => {
   const dispatch = useTypedDispatch()
 
   useEffect(() => {
