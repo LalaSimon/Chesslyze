@@ -5,10 +5,10 @@ import { Button } from '@shared/components/Button'
 import { useTypedDispatch, useTypedSelector } from '@redux/store'
 import { clearFen, setUndoRedoFen } from '@redux/slices/Analysis/fen'
 import { clearMoveList } from '@redux/slices/Analysis/moveList'
-import { setOpeningName } from '@redux/slices/Analysis/openingInfo'
-import { fetchMovesEval } from '@shared/utils/LichesAPI'
+import { setOpeningList, setOpeningName } from '@redux/slices/Analysis/openingInfo'
 import SocketService from '@services/SocketService'
 import GameService from '@services/GameService'
+import { lichessApiHandler } from '@api/lichesApiHandler'
 
 type ChessboardButtonsProps = {
   setGame: Dispatch<SetStateAction<Chess>>
@@ -23,12 +23,16 @@ export const ChessboardButtons = ({ setGame, roomID }: ChessboardButtonsProps) =
 
   const clearBoard = async () => {
     if (SocketService.socket) {
+      const lichessInfo = await lichessApiHandler.getMoves(
+        'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+      )
       GameService.cleanBoard(SocketService.socket, roomID)
       showFenNumber.current = 0
+
+      dispatch(setOpeningList(lichessInfo))
       dispatch(clearFen())
       dispatch(clearMoveList())
       dispatch(setOpeningName(''))
-      await fetchMovesEval('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', dispatch)
       setGame(new Chess())
     }
   }
@@ -65,11 +69,14 @@ export const ChessboardButtons = ({ setGame, roomID }: ChessboardButtonsProps) =
   useEffect(() => {
     const clearBoardHandler = async () => {
       showFenNumber.current = 0
+      const lichessInfo = await lichessApiHandler.getMoves(
+        'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+      )
       setGame(new Chess())
       dispatch(clearFen())
       dispatch(clearMoveList())
       dispatch(setOpeningName(''))
-      await fetchMovesEval('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', dispatch)
+      dispatch(setOpeningList(lichessInfo))
     }
 
     const undoMoveHandler = () => {

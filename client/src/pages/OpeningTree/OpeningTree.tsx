@@ -13,7 +13,7 @@ export const OpeningTree = () => {
     <Layout>
       <div>
         <OpeningChessboard game={game} setGame={setGame} setMovesList={setMovesList} />
-        <OpeningTable openingList={movesList} fen={game.fen()} />
+        <OpeningTable openingList={movesList} fen={game.fen()} setMovesList={setMovesList} />
       </div>
     </Layout>
   )

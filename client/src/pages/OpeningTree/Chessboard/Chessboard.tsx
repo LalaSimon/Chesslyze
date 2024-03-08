@@ -5,9 +5,9 @@ import { SetStateAction, Dispatch, useState, useEffect } from 'react'
 import { Arrow, BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 
 import { useTypedSelector } from '@redux/store'
-import { fetchLichessInfo } from '@shared/utils/LichesAPI'
 import { OpeningFenEvalType } from '@shared/types/OpeningFenEvalType'
 import { splitMovesToArrows } from '@shared/utils/splitMovesToArrows'
+import { lichessApiHandler } from '@api/lichesApiHandler'
 
 type ChessboardComponentProps = {
   game: Chess
@@ -41,11 +41,13 @@ export const OpeningChessboard = ({ game, setGame, setMovesList }: ChessboardCom
     if (!undoredoFen && game.move(move) && game.history({ verbose: true })) {
       const moves = game.history({ verbose: true })
       const moveObject = moves[0]
-      setGame(new Chess(moveObject.after))
-      const data = await fetchLichessInfo(game.fen())
-      setMovesList(data.moves)
       const arr: Arrow[] = []
-      data.moves.map((move: OpeningFenEvalType, index: number) => {
+      const data = await lichessApiHandler.getMoves(game.fen())
+
+      setGame(new Chess(moveObject.after))
+      setMovesList(data)
+
+      data.map((move: OpeningFenEvalType, index: number) => {
         index < 3 ? arr.push(splitMovesToArrows(move.uci) as Arrow) : null
       })
       setArrows(arr)
