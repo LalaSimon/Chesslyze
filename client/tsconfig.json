@@ -11,6 +11,7 @@
             "@redux/*": ["redux/*"],
             "@services/*": ["services/*"],
             "@shared/*": ["shared/*"],
+            "@api/*": ["api/*"]
           },
 
         /* Bundler mode */

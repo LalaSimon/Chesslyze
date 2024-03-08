@@ -12,11 +12,12 @@ export default defineConfig({
       '@redux': resolve(__dirname, '/src/redux'),
       '@services': resolve(__dirname, '/src/services'),
       '@shared': resolve(__dirname, '/src/shared'),
+      '@api': resolve(__dirname, '/src/api'),
     },
   },
   build: {
     rollupOptions: {
-      external: ['@redux', '@pages', '@services', '@shared'],
+      external: ['@redux', '@pages', '@services', '@shared', '@api'],
     },
   },
 })

@@ -3,14 +3,14 @@ import { Chessboard } from 'react-chessboard'
 import { Square, Chess } from 'chess.js'
 import { SetStateAction, Dispatch, useState, useEffect } from 'react'
 import { Arrow } from 'react-chessboard/dist/chessboard/types'
-
+import { lichessApiHandler } from '../../../../../api/lichesApiHandler'
 import { MoveObject } from '@shared/types/MoveObject'
 import { useTypedDispatch, useTypedSelector } from '@redux/store'
 import { setFen, setUndoRedoFen } from '@redux/slices/Analysis/fen'
 import { setMoveList } from '@redux/slices/Analysis/moveList'
-import { fetchMovesEval, fetchOpening } from '@shared/utils/LichesAPI'
 import GameService from '@services/GameService'
 import SocketService from '@services/SocketService'
+import { setOpeningList, setOpeningName } from '@redux/slices/Analysis/openingInfo'
 
 type ChessboardComponentProps = {
   game: Chess
@@ -44,13 +44,14 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
     if (!undoredoFen && SocketService.socket && game.move(move) && game.history({ verbose: true })) {
       const moves = game.history({ verbose: true })
       const moveObject = moves[0]
+      const lichessInfo = await lichessApiHandler.getLichessInfo(moveObject.after)
 
       GameService.gameUpdate(SocketService.socket, moveObject, roomID)
       setGame(new Chess(moveObject.after))
       dispatch(setFen(moveObject.after))
       dispatch(setMoveList(moveObject))
-      await fetchMovesEval(moveObject.after, dispatch)
-      await fetchOpening(moveObject.after, dispatch)
+      dispatch(setOpeningList(lichessInfo.moves))
+      dispatch(setOpeningName(lichessInfo.opening.name))
     }
   }
   // drowing arrows function
@@ -110,11 +111,12 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
 
     const handleGameUpdate = async (data: MoveObject) => {
       if (game.move(data.san)) {
+        const lichessInfo = await lichessApiHandler.getLichessInfo(data.after)
         setGame(new Chess(data.after))
         dispatch(setFen(data.after))
         dispatch(setMoveList(data))
-        await fetchMovesEval(data.after, dispatch)
-        await fetchOpening(data.after, dispatch)
+        dispatch(setOpeningList(lichessInfo.moves))
+        dispatch(setOpeningName(lichessInfo.opening.name))
       }
     }
 

@@ -1,22 +1,30 @@
 import { useTypedDispatch } from '@redux/store'
-import { fetchMovesEval } from '@shared/utils/LichesAPI'
-import { useEffect } from 'react'
+import { Dispatch, SetStateAction, useEffect } from 'react'
+
 import { TableHeader } from './TableHeader'
 import { TableBody } from './TableBody'
 import { OpeningName } from './OpeningName'
 import { OpeningFenEvalType } from '@shared/types/OpeningFenEvalType'
+import { lichessApiHandler } from '@api/lichesApiHandler'
+import { setOpeningList } from '@redux/slices/Analysis/openingInfo'
 
 type OpeningTableType = {
   fen: string
   openingList: OpeningFenEvalType[]
+  setMovesList?: Dispatch<SetStateAction<OpeningFenEvalType[]>>
 }
 
-export const OpeningTable = ({ fen, openingList }: OpeningTableType) => {
+export const OpeningTable = ({ fen, openingList, setMovesList }: OpeningTableType) => {
   const dispatch = useTypedDispatch()
 
   useEffect(() => {
-    fetchMovesEval(fen, dispatch)
-  }, [fen, dispatch])
+    const getMoves = async () => {
+      const data = await lichessApiHandler.getMoves(fen)
+      if (setMovesList) setMovesList(data)
+      dispatch(setOpeningList(data))
+    }
+    getMoves()
+  }, [fen, dispatch, setMovesList])
 
   if (!openingList) return <span className="text-center">loading - please wait...</span>
 
