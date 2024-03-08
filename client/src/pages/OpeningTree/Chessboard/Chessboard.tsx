@@ -4,10 +4,9 @@ import { Square, Chess } from 'chess.js'
 import { SetStateAction, Dispatch, useState } from 'react'
 import { Arrow } from 'react-chessboard/dist/chessboard/types'
 
-import { useTypedDispatch, useTypedSelector } from '@redux/store'
-import { setFen } from '@redux/slices/Analysis/fen'
-import { setMoveList } from '@redux/slices/Analysis/moveList'
-import { fetchMovesEval, fetchOpening } from '@shared/utils/LichesAPI'
+import { useTypedSelector } from '@redux/store'
+import { fetchLichessInfo } from '@shared/utils/LichesAPI'
+import { OpeningFenEvalType } from '@shared/types/OpeningFenEvalType'
 
 type ChessboardComponentProps = {
   game: Chess
@@ -20,12 +19,19 @@ type MoveType = {
   promotion: string
 }
 
+function splitStringInHalf(str: string) {
+  const length = str.length
+  const halfLength = Math.floor(length / 2)
+  const firstHalf = str.substring(0, halfLength)
+  const secondHalf = str.substring(halfLength)
+  return [firstHalf, secondHalf]
+}
+
 export const OpeningChessboard = ({ game, setGame }: ChessboardComponentProps) => {
   const [highlightedSquares, setHighlightedSquares] = useState<string[]>([])
   const [arrows, setArrows] = useState<Arrow[]>([])
   const { myOrientation } = useTypedSelector(state => state.orientation)
   const { undoredoFen } = useTypedSelector(state => state.fen)
-  const dispatch = useTypedDispatch()
 
   // every move trigger this function
 
@@ -41,20 +47,15 @@ export const OpeningChessboard = ({ game, setGame }: ChessboardComponentProps) =
       const moves = game.history({ verbose: true })
       const moveObject = moves[0]
       setGame(new Chess(moveObject.after))
-      dispatch(setFen(moveObject.after))
-      dispatch(setMoveList(moveObject))
-      await fetchMovesEval(moveObject.after, dispatch)
-      await fetchOpening(moveObject.after, dispatch)
+      const data = await fetchLichessInfo(game.fen())
+      const arr: Arrow[] = []
+      data.moves.map((move: OpeningFenEvalType, index: number) => {
+        index < 3 ? arr.push(splitStringInHalf(move.uci) as Arrow) : null
+      })
+      setArrows(arr)
     }
   }
-  // drowing arrows function
-  const arrowDrow = (arrowsData: Arrow[]) => {
-    if (arrowsData.length === 0 && arrowsData !== arrows) {
-      setArrows([])
-    } else {
-      setArrows(arrowsData)
-    }
-  }
+
   // allowing to higlightSquares and unHiglight them
   const highlightSquare = (square: string) => {
     !highlightedSquares.includes(square)
@@ -72,8 +73,8 @@ export const OpeningChessboard = ({ game, setGame }: ChessboardComponentProps) =
     <div onClick={clearAnalyze}>
       <Chessboard
         onSquareRightClick={s => highlightSquare(s)}
+        areArrowsAllowed={false}
         customArrows={arrows}
-        onArrowsChange={arrowDrow}
         onPieceDrop={onDrop}
         position={game.fen()}
         boardOrientation={myOrientation}
