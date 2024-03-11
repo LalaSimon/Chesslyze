@@ -5,6 +5,7 @@ import orientationReducer from './slices/Analysis/orientation'
 import moveListReducer from './slices/Analysis/moveList'
 import openingInfoReducer from './slices/Analysis/openingInfo'
 import analizeReducer from './slices/Analysis/analize'
+import openingPageReducer from './slices/Openings/OpeningPage'
 
 const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ const store = configureStore({
     moveList: moveListReducer,
     openingInfo: openingInfoReducer,
     analize: analizeReducer,
+    openingPage: openingPageReducer,
   },
 })
 

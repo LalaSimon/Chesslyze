@@ -3,17 +3,17 @@ import { Chess } from 'chess.js'
 import { useState } from 'react'
 import { OpeningChessboard } from './Chessboard/Chessboard'
 import { OpeningTable } from '@pages/Analyze/components/Main/Aside/OpeningTable/OpeningTable'
-import { OpeningFenEvalType } from '@shared/types/OpeningFenEvalType'
+import { useTypedSelector } from '@redux/store'
 
 export const OpeningTree = () => {
   const [game, setGame] = useState(new Chess())
-  const [movesList, setMovesList] = useState<OpeningFenEvalType[]>([])
+  const { openingList, openingName } = useTypedSelector(state => state.openingPage)
 
   return (
     <Layout>
       <div>
-        <OpeningChessboard game={game} setGame={setGame} setMovesList={setMovesList} />
-        <OpeningTable openingList={movesList} fen={game.fen()} setMovesList={setMovesList} />
+        <OpeningChessboard game={game} setGame={setGame} />
+        <OpeningTable openingName={openingName} openingList={openingList} fen={game.fen()} />
       </div>
     </Layout>
   )
