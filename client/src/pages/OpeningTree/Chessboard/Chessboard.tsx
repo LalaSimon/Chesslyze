@@ -4,15 +4,15 @@ import { Square, Chess } from 'chess.js'
 import { SetStateAction, Dispatch, useState, useEffect } from 'react'
 import { Arrow, BoardOrientation } from 'react-chessboard/dist/chessboard/types'
 
-import { useTypedDispatch, useTypedSelector } from '@redux/store'
+import { useTypedSelector } from '@redux/store'
 import { OpeningFenEvalType } from '@shared/types/OpeningFenEvalType'
 import { splitMovesToArrows } from '@shared/utils/splitMovesToArrows'
 import { lichessApiHandler } from '@api/lichesApiHandler'
-import { setOpeningPageMoveList, setOpeningPageOpeningName } from '@redux/slices/Openings/OpeningPage'
 
 type ChessboardComponentProps = {
   game: Chess
   setGame: Dispatch<SetStateAction<Chess>>
+  setMovesList: Dispatch<SetStateAction<OpeningFenEvalType[]>>
 }
 
 type MoveType = {
@@ -21,13 +21,12 @@ type MoveType = {
   promotion: string
 }
 
-export const OpeningChessboard = ({ game, setGame }: ChessboardComponentProps) => {
-  const dispatch = useTypedDispatch()
-  const { undoredoFen } = useTypedSelector(state => state.fen)
-
+export const OpeningChessboard = ({ game, setGame, setMovesList }: ChessboardComponentProps) => {
   const [highlightedSquares, setHighlightedSquares] = useState<string[]>([])
   const [arrows, setArrows] = useState<Arrow[]>([])
   const [myOrientation, setMyOrientation] = useState<BoardOrientation>('white')
+
+  const { undoredoFen } = useTypedSelector(state => state.fen)
 
   // every move trigger this function
 
@@ -43,12 +42,12 @@ export const OpeningChessboard = ({ game, setGame }: ChessboardComponentProps) =
       const moves = game.history({ verbose: true })
       const moveObject = moves[0]
       const arr: Arrow[] = []
-      const data = await lichessApiHandler.getLichessInfo(game.fen())
+      const data = await lichessApiHandler.getMoves(game.fen())
 
       setGame(new Chess(moveObject.after))
-      dispatch(setOpeningPageMoveList(data.moves))
-      dispatch(setOpeningPageOpeningName(data.opening.name))
-      data.moves.map((move: OpeningFenEvalType, index: number) => {
+      setMovesList(data)
+
+      data.map((move: OpeningFenEvalType, index: number) => {
         index < 3 ? arr.push(splitMovesToArrows(move.uci) as Arrow) : null
       })
       setArrows(arr)
@@ -64,7 +63,6 @@ export const OpeningChessboard = ({ game, setGame }: ChessboardComponentProps) =
 
   //clearing both highlights and arrows
   const clearAnalyze = () => {
-    setArrows([])
     setHighlightedSquares([])
   }
 
