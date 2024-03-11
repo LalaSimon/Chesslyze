@@ -1,8 +1,8 @@
-import { useTypedSelector } from '@redux/store'
+type OpeningNameType = {
+  openingName: string
+}
 
-export const OpeningName = () => {
-  const { openingName } = useTypedSelector(state => state.openingInfo)
-
+export const OpeningName = ({ openingName }: OpeningNameType) => {
   return (
     <section className="flex flex-col text-center">
       <span>Opening:</span> <span>{!openingName ? '-' : openingName}</span>
