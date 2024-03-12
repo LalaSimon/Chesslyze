@@ -2,7 +2,7 @@
 import { Chessboard } from 'react-chessboard'
 import { Square, Chess } from 'chess.js'
 import { SetStateAction, Dispatch, useState, useEffect } from 'react'
-import { Arrow } from 'react-chessboard/dist/chessboard/types'
+import { Arrow, BoardPosition } from 'react-chessboard/dist/chessboard/types'
 import { lichessApiHandler } from '../../../../../api/lichesApiHandler'
 import { MoveObject } from '@shared/types/MoveObject'
 import { useTypedDispatch, useTypedSelector } from '@redux/store'
@@ -86,9 +86,9 @@ export const ChessboardComponent = ({ game, roomID, setGame }: ChessboardCompone
   const positionChecker = () => {
     if (undoredoFen === game.fen()) {
       dispatch(setUndoRedoFen(''))
-      return game.fen()
+      return game.fen() as BoardPosition
     }
-    if (!undoredoFen) return game.fen()
+    if (!undoredoFen) return game.fen() as BoardPosition
     if (undoredoFen) return undoredoFen
   }
 
